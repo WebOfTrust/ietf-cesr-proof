@@ -1,7 +1,7 @@
 ---
 title: "CESR Verifiable Credential Proof Format"
 abbrev: "CESR-PROOF"
-docname: draft-todo-yourname-protocol-latest
+docname: draft-pfeairheller-cesr-proof-latest
 category: info
 
 ipr: trust200902
