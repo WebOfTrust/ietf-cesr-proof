@@ -71,7 +71,7 @@ What problem are we solving.  How does it fit with CESR, KERI and SAIDs
 ## CESR Attachments
 
 
-The specification adds 2 *Counter Four Character Codes* to the Master Code Table [TODO: add reference here] and 1 *Small Variable Raw Size Code Type*
+The specification adds 2 *Counter Four Character Codes* to the Master Code Table and 1 *Small Variable Raw Size Code Type*
 to the Master Code Table (which results in 3 new code entries):
 
 |   Code   | Description                                                                         | Code Length | Count or Index Length | Total Length |
@@ -195,6 +195,11 @@ Given the following signed SAD:
 
 
 
+# Conventions and Definitions
+
+{::boilerplate bcp14-tagged}
+
+
 # Security Considerations
 
 TODO Security
@@ -206,7 +211,6 @@ This document has no IANA actions.
 --- back
 
 # Acknowledgments
-
 {:numbered="false"}
 
-TODO acknowledge.
+Dr Sam Smith, Kevin Griffin and the Global Legal Entity Identifier Foundation (GLEIF)
