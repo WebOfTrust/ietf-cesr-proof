@@ -131,7 +131,7 @@ for the nested SAD that it represents.
 
 Given the following signed SAD:
 
-```cesr
+```
 {
   "v": "ACDC10JSON00011c_",
   "d": "EpcEvrX2gGTpmKbIG25GSA7_LsWwwzVQ6aUilgBubpGI",
@@ -154,7 +154,7 @@ Given the following signed SAD:
           -JAB  -a-personal -FABELfzj-TkiKYWsNKk2WE8F8VEgbu3P-_HComVHcKrvGmY0AAAAAAAAAAAAAAAAAAAAAAAEO94wR_rDPALyK1KYvtjA2CuuWM5A9_T9SfnRAF0OoZs-AABAAFzLPWIG3XEXzKkGxIMAozgh9me6Ss2J4HZpdtqtZDLJRzic2wTePt4wx_PNgLcukTFe70-MXy2VlJvIaJtOsDA
 ```
 
-```cesr
+```
 {
   "v": "KERI10JSON00006a_",
   "t": "exn",
