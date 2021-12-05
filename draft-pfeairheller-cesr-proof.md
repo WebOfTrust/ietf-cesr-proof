@@ -118,22 +118,24 @@ The simplest path in the SAD Path Language is a single `-` character representin
 level of the SAD content.
 
 Root Path
-``` - ```
+~~~
+ -
+~~~
 
 After the root path, path components follow, delimited by the `-` character. Path components may be integer indices into
 field labels or arrays or may be full field labels. No wildcards are supported by the SAD Path Language
 
 An example SAD Path using only labels that resolve to map contexts follows:
 
-```
+~~~
 -a-personal
-```
+~~~
 
 In addition, integers can be specified and their meaning is dependent on the context of the SAD.
 
-```
+~~~
 -1-12-personal-0
-```
+~~~
 
 The rules for a SAD Path Language processor are simple. If a path consists of only a single `-`, it represents the root
 of the SAD and therefore the entire SAD content. Following any `-` character is a path component that points to a field
@@ -154,7 +156,7 @@ array.
 This section provides some more examples for SAD Path expressions. The examples are based on Authentic Chained Data
 Containers (ACDCs) representing verifiable credentials.
 
-```json
+~~~json
 {
   "v": "ACDC10JSON00011c_",
   "d": "EBdXt3gIXOf2BBWNHdSXCJnFJL5OuQPyM5K0neuniccM",
@@ -186,7 +188,7 @@ Containers (ACDCs) representing verifiable credentials.
     }
   ]
 }
-```
+~~~
 
 Figure 1. Example ACDC Credential SAD
 
@@ -247,15 +249,15 @@ Introduction to CESR Signatures
 
 ## -J
 
-```
+~~~
 -J 1 (Path, TransIdxSigGroup)
-```
+~~~
 
 ## -K
 
-```
+~~~
 -K Count of Sigs (Root Path, Path Sig Groups)
-```
+~~~
 
 ## Embedding and Transposable Signatures
 
@@ -266,7 +268,7 @@ for the nested SAD that it represents.
 
 Given the following signed SAD:
 
-```
+~~~
 {
   "v": "ACDC10JSON00011c_",
   "d": "EpcEvrX2gGTpmKbIG25GSA7_LsWwwzVQ6aUilgBubpGI",
@@ -287,9 +289,9 @@ Given the following signed SAD:
   }
 }-KAC  -  -JAB  -  -FABELfzj-TkiKYWsNKk2WE8F8VEgbu3P-_HComVHcKrvGmY0AAAAAAAAAAAAAAAAAAAAAAAEO94wR_rDPALyK1KYvtjA2CuuWM5A9_T9SfnRAF0OoZs-AABAAha6OA-Uw4nEHi3AleA-W59sVAjTvpPg1XtuFYEnVHG0TBqTabIrSuNIJP9OpSvkZiOWYRlPG839_wAPzU106Aw
           -JAB  -a-personal -FABELfzj-TkiKYWsNKk2WE8F8VEgbu3P-_HComVHcKrvGmY0AAAAAAAAAAAAAAAAAAAAAAAEO94wR_rDPALyK1KYvtjA2CuuWM5A9_T9SfnRAF0OoZs-AABAAFzLPWIG3XEXzKkGxIMAozgh9me6Ss2J4HZpdtqtZDLJRzic2wTePt4wx_PNgLcukTFe70-MXy2VlJvIaJtOsDA
-```
+~~~
 
-```
+~~~
 {
   "v": "KERI10JSON00006a_",
   "t": "exn",
@@ -318,9 +320,7 @@ Given the following signed SAD:
 }-AAB (message signature)
 -KAC  -a  -JAB  -  -FABELfzj-TkiKYWsNKk2WE8F8VEgbu3P-_HComVHcKrvGmY0AAAAAAAAAAAAAAAAAAAAAAAEO94wR_rDPALyK1KYvtjA2CuuWM5A9_T9SfnRAF0OoZs-AABAAha6OA-Uw4nEHi3AleA-W59sVAjTvpPg1XtuFYEnVHG0TBqTabIrSuNIJP9OpSvkZiOWYRlPG839_wAPzU106Aw
           -JAB  -a-personal -FABELfzj-TkiKYWsNKk2WE8F8VEgbu3P-_HComVHcKrvGmY0AAAAAAAAAAAAAAAAAAAAAAAEO94wR_rDPALyK1KYvtjA2CuuWM5A9_T9SfnRAF0OoZs-AABAAFzLPWIG3XEXzKkGxIMAozgh9me6Ss2J4HZpdtqtZDLJRzic2wTePt4wx_PNgLcukTFe70-MXy2VlJvIaJtOsDA
-
-
-```
+~~~
 
 # Presentation Exchange
 
