@@ -310,7 +310,7 @@ When signing nested SAD content, the serialization used at the time of signing i
 
 
 
-```json
+~~~json
 {
   "v": "ACDC10JSON00011c_",
   "d": "EBdXt3gIXOf2BBWNHdSXCJnFJL5OuQPyM5K0neuniccM",
@@ -329,7 +329,7 @@ When signing nested SAD content, the serialization used at the time of signing i
     }
   }
 }
-```
+~~~
 
 To sign the SAD located at the path `-a`, JSON serialization would be used because the SAD at that path does not have a version field so the version field of its parent is used.  The serialization rules (spacing, field ordering, etc) for a SAD would be used for the SAD and the serialization type and the signature would be applied to the bytes of the JSON for that map.  Any presentation of the signed data must always include the fully nested SAD.  The only valid nesting of this credential would be as follows:
 
