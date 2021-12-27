@@ -71,11 +71,11 @@ informative:
       -
         name: Mark Nottingham
     date: 2003
-        
+
 
   JSONPath:
     target: https://datatracker.ietf.org/doc/draft-ietf-jsonpath-base/
-    title: JSONPath: Query expressions for JSON
+    title: JSONPath - Query expressions for JSON
     author:
       -
         name: Stefan Gössner
@@ -232,7 +232,7 @@ Signatures on SAD content require signing the serialized encoding format of the 
  }
 ~~~
 
-where KERI is the identifier of KERI events followed by the hexidecimal major and minor version code and then the serialized encoding format of the event, JSON in this case.  KERI and ACDC support JSON, MessagePack and CBOR currently.  Field ordering is important when apply cryptographic signatures and all serialized encoding formats must support static field ordering.  Serializing a SAD starts with reading the version string from the SAD field (`v` for KERI and ACDC events message) to determine the serialized encoding format of the message.  The serialized encoding format is used to generate the SAID at creation and can not be changed.  The event map is serialized using a library that ensures the static field order perserved across serialization and deserialization and the private keys are used to generate the qualified cryptographic material that represents the signatures over the SAD content.  
+where KERI is the identifier of KERI events followed by the hexidecimal major and minor version code and then the serialized encoding format of the event, JSON in this case.  KERI and ACDC support JSON, MessagePack and CBOR currently.  Field ordering is important when apply cryptographic signatures and all serialized encoding formats must support static field ordering.  Serializing a SAD starts with reading the version string from the SAD field (`v` for KERI and ACDC events message) to determine the serialized encoding format of the message.  The serialized encoding format is used to generate the SAID at creation and can not be changed.  The event map is serialized using a library that ensures the static field order perserved across serialization and deserialization and the private keys are used to generate the qualified cryptographic material that represents the signatures over the SAD content.
 
 The same serialized encoding format must be used when nesting a SAD in another SAD.  For example, an ACDC credential that was issued using JSON can only be embedded and presented in a KERI `exn` presentation event message that uses JSON as its serialized encoding format.  That same credential can not be transmitted using CBOR or MessagePack.  Controllers can rely on this restriction when verifying signatures of embedded SADs.  When processing the signature attachments and resolving the data at a given SAD path, the serialization of the outter most SAD can be used at any depth of the traversal.  New verison string processing does not need to occur at nested paths.  However, if credential signature verification is pipelined and process in parallel processes from event message processing, the version string of the nested SAD will still be valid and can be used if needed.
 
@@ -262,7 +262,7 @@ The SAD Path Signature Group provides a four character counter code, `-J##`, for
       "d": "EBdXt3gIXOf2BBWNHdSXCJnFJL5OuQPyM5K0neuniccM",
       "i": "EmkPreYpZfFk66jpf3uFv7vklXKhzBrAqjsKAn2EDIPM",
       "s": "E46jrVPTzlSkUPqGGeIZ8a8FWS7a6s4reAXRZOkogZ2A",
-      "a": { 
+      "a": {
         "d": "EgveY4-9XgOcLxUderzwLIr9Bf7V_NHwY1lkFrn9y2PY",
         "i": "EQzFVaMasUf4cZZBKA0pUbRc9T8yUXRFLyM1JDASYqAA",
         "dt": "2021-06-09T17:35:54.169967+00:00",
@@ -465,7 +465,7 @@ Applying signatures to SADs with SAIDs in place of fully expanded SAD content en
         "street": "123 Main St",
         "city": "Salt Lake City",
         "state": "Utah",
-        "zipcode": "84157"  
+        "zipcode": "84157"
       },
       "phone": {
         "d": "E6lty8H2sA_1acq8zg89_kqF194DbF1cDpwA7UPtwjPQ",
@@ -501,9 +501,9 @@ The three nested blocks of the `a` block `legalName`, `address` and `phone` are 
 }
 ~~~
 
-It is important to note that if this version of the credential is the one issued to the holder and the signature over the entire credential is on the serialized data of this version of the credential it is the only version that can be presented.  The full SAD data of the three nested blocks would be delivered out of band from the signed credential.  The top level schema would describe the blocks with conditional subschema for each section.  The credential signature becomes a cryptographic commitment to the contents of the overall credential as well as the content of each of the blocks and will still validate the presented credential with significantly less bandwidth.  
+It is important to note that if this version of the credential is the one issued to the holder and the signature over the entire credential is on the serialized data of this version of the credential it is the only version that can be presented.  The full SAD data of the three nested blocks would be delivered out of band from the signed credential.  The top level schema would describe the blocks with conditional subschema for each section.  The credential signature becomes a cryptographic commitment to the contents of the overall credential as well as the content of each of the blocks and will still validate the presented credential with significantly less bandwidth.
 
-With this approach, credential presentation request and exchange protocols can be created that modify the schema with the conditional subschema, removing the conditions that allow for SAIDs in place of the required (or presented) nested blocks.  The modified schema can be used in such a protocol to indicate the required sections to be delivered out of bounds or as a commitment to provide the nested blocks after the crendential presentation has occurred.  
+With this approach, credential presentation request and exchange protocols can be created that modify the schema with the conditional subschema, removing the conditions that allow for SAIDs in place of the required (or presented) nested blocks.  The modified schema can be used in such a protocol to indicate the required sections to be delivered out of bounds or as a commitment to provide the nested blocks after the crendential presentation has occurred.
 
 
 
