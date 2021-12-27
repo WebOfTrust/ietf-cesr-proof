@@ -20,6 +20,14 @@ author:
     email: Philip.Feairheller@gleif.org
 
 normative:
+  ACDC:
+    target: https://datatracker.ietf.org/doc/draft-ssmith-acdc/
+    title: Authentic Data Chained Containers
+    author:
+      ins: S. Smith
+      name: Samuel M. Smith
+      org: ProSapien LLC
+    date: 2021
   CESR:
     target: https://datatracker.ietf.org/doc/draft-ssmith-cesr/
     title: Composable Event Streaming Representation (CESR)
@@ -52,15 +60,36 @@ informative:
     target: https://www.json.org/json-en.html
     title: JavaScript Object Notation Delimeters
 
+  RFC6901:
+    target: https://datatracker.ietf.org/doc/html/rfc6901
+    title: JavaScript Object Notation (JSON) Pointer
+    author:
+      -
+        name: Paul C. Bryan
+      -
+        name: Kris Zyp
+      -
+        name: Mark Nottingham
+    date: 2003
+
+
   JSONPath:
-    target: https://tools.ietf.org/id/draft-goessner-dispatch-jsonpath-00.html
-    title: JSONPath -- XPath for JSON
+    target: https://datatracker.ietf.org/doc/draft-ietf-jsonpath-base/
+    title: JSONPath - Query expressions for JSON
+    author:
+      -
+        name: Stefan Gössner
+      -
+        name: Glyn Normington
+      -
+        name: Carsten Bormann
+    date: 2021-10-25
 
 tags: IETF, CESR, SAID, KERI, ACDC
 
 --- abstract
 
-CESR Proof Signatures are an extension to the Composable Event Streaming Representation (CESR) that provide transposable cryptographic signature attachments on self-addressing data (SAD). A SAD (such as an Authentic Chained Data Container (ACDC) Verifiable Credential) may be signed with a CESR Proof Signature and streamed alongside any other CESR content.  In addition, a signed SAD can be embedded inside another SAD and the CESR proof signature attachment can be transposed to the outer SAD and streamed without losing any cryptographic integrity.
+CESR Proof Signatures are an extension to the Composable Event Streaming Representation [CESR] that provide transposable cryptographic signature attachments on self-addressing data (SAD) [SAID]. A SAD (such as an Authentic Chained Data Container (ACDC) Verifiable Credential [ACDC]) may be signed with a CESR Proof Signature and streamed alongside any other CESR content.  In addition, a signed SAD can be embedded inside another SAD and the CESR proof signature attachment can be transposed across envelope boundaries and streamed without losing any cryptographic integrity.
 
 --- middle
 
@@ -69,19 +98,19 @@ CESR Proof Signatures are an extension to the Composable Event Streaming Represe
 Composable Event Streaming Representation (CESR) is a dual text-binary encoding format that has the unique property of text-binary concatenation composability. The CESR specification not only provides the definition of the streaming format but also the codes needed for creating and sharing all event types and signatures on all event types for the Key Event Receipt Infrastructure (KERI). While all KERI event messages are self-addressing data (SAD), there is a broad class of SADs that are not KERI events but that require signature attachments. ACDC Verifiable credentials fit into this class of SADs. With more complex data structures represented as SADs, such as verifiable credentials, there is a need to provide signature attachments on nested subsets of SADs. Similar to indices in indexed controller signatures in KERI that specify the location of the public key they represent, nested SAD signatures need a path mechanism to specify the exact location of the nested content that they are signing. CESR Proof Signatures provide this mechanism with the CESR SAD Path Language and new attachment codes, detailed in this specification.
 
 ## Streamable SADs
-A primary goal of CESR Proof Signatures is to allow any signed self-addressing data (SAD) to be streamed inline with any other CESR content.  In support of that goal, CESR Proof Signatures leverages CESR attachments to define a signature scheme that can be attached to any SAD content serialized as JSON, MessagePack or CBOR.  Using this capability, SADs signed with CESR Proof Signatures can be streamed inline in either the text or binary domain alongside any other KERI event message over, for example TCP or UDP.  In addition, signed SADs can be transported via HTTP as a CESR HTTP Request (todo: reference needed).
+A primary goal of CESR Proof Signatures is to allow any signed self-addressing data (SAD) to be streamed inline with any other CESR content.  In support of that goal, CESR Proof Signatures leverage CESR attachments to define a signature scheme that can be attached to any SAD content serialized as JSON, MessagePack or CBOR.  Using this capability, SADs signed with CESR Proof Signatures can be streamed inline in either the text or binary domain alongside any other KERI event message over, for example TCP or UDP.  In addition, signed SADs can be transported via HTTP as a CESR HTTP Request (todo: reference needed).
 
 ## Nested Partial Signatures
-Capabilities like blinded disclosure, selective disclosure and one-time use credentials require signatures on nested subsets of SADs.  CESR Proof Signatures can be used to sign as many portions of a SAD (including the entire SAD) whether the signed subsets are SADs , SAD references (described below) or the self-addressing identifer (SAID) of a SAD.  Selective disclosure can be accomplished when signatures are applied to multiple subsets of a SAD.  When using the data in a presentation, like a verifiable credential presentation, a selective subset signatures can be presented without revealing other portions of the original signed SAD.  When the signed content is a SAD reference, a blinded presentation is also possible to allow for receipts on a presentation that contains terms or conditions before the actual data is presented.  Finally, if a nonce field is added to a signed SAD (nested or otherwise), one-time use credentials can be generated by treating the SAD as a template and delivered alongside multiple nonces and signatures to allow for non-correlatable presentations of the same data.
+CESR Proof Signatures can be used to sign as many portions of a SAD (including the entire SAD) whether the signed subsets are SADs or the self-addressing identifer (SAID) of a SAD.  A new CESR count code is included with this specification to allow for multiple signatures on nested portions of a SAD to be grouped together under one attachment.  By including a SAD Path in the new CESR attachment for grouping signatures, the entire group of signatures can be transposed across envelope boundaries by changing only the root path of the group attachment code.
 
 ## Transposable Signature Attachments
 
-There are several events in KERI that can contain context specific embedded self-addressing data (SADs). Exchange events (`exn`) for peer-to-peer communication and Replay events (`rpy`) for responding to data requests as well as Expose events (`exp`) for providing anchored data are all examples of KERI events that contain embedded SADs as part of their payload. If the SAD payload for one of these event types is signed with a CESR attachment, the resulting structure is not embeddable in one of the mapping serializations (JSON, CBOR, MessagePack) supported by CESR. To solve this problem, CESR Proof Signatures are transposable in that an entire signature group on any given SAD can be transposed to attach to the end of an outer SAD without losing its meaning. This unique feature is provided by a root path designation in the outermost attachment code of any SAD signature group that can be updated to point to the embedding location of the outer SAD. Protocols for verifiable credential issuance and proof presentation can be defined using this capability to embed the same verifiable credential SAD at and location in an outer `exn` message as appropriate for the protocol without having to define a unique signature scheme for each protocol.
+There are several events in KERI that can contain context specific embedded self-addressing data (SADs). Exchange events (`exn`) for peer-to-peer communication and Replay events (`rpy`) for responding to data requests as well as Expose events (`exp`) for providing anchored data are all examples of KERI events that contain embedded SADs as part of their payload. If the SAD payload for one of these event types is signed with a CESR attachment, the resulting structure is not embeddable in one of the mapping serializations (JSON, CBOR, MessagePack) supported by CESR. To solve this problem, CESR Proof Signatures are transposable across envelope boundaries in that a single SAD signature or an entire signature group on any given SAD can be transposed to attach to the end of an enveloping SAD without losing its meaning. This unique feature is provided by the SAD Path language used in either a SAD signature or the root path designation in the outermost attachment code of any SAD signature group.  These paths can be updated to point to the embedded location of the signed SAD inside the envelope. Protocols for verifiable credential issuance and proof presentation can be defined using this capability to embed the same verifiable credential SAD at and location in an enveloping `exn` message as appropriate for the protocol without having to define a unique signature scheme for each protocol.
 
 
 # CESR SAD Path Language
 
-CESR Proof Signatures defines a SAD Path Language to be used in signature attachments for specifying the location of the SAD content within the signed SAD that a signature attachment is verifying. This path language has a more limited scope than alternatives like JSONPath and is therefore simpler and easier to encode in CESR signature attachments. SADs in CESR and therefore CESR Proof Signatures require static field ordering of all maps. The SAD path language takes advantage of this feature to allow for a base64 compatible syntax into SADs even when a SAD uses non-base64 compatible characters for field labels.
+CESR Proof Signatures defines a SAD Path Language to be used in signature attachments for specifying the location of the SAD content within the signed SAD that a signature attachment is verifying. This path language has a more limited scope than alternatives like JSONPtr [RFC6901] or JSONPath [JSONPath] and is therefore simpler and more compact when encoding in CESR signature attachments. SADs in CESR and therefore CESR Proof Signatures require static field ordering of all maps. The SAD path language takes advantage of this feature to allow for a base64 compatible syntax into SADs even when a SAD uses non-base64 compatible characters for field labels.
 
 ## Description and Usage
 
@@ -172,9 +201,12 @@ The examples in Table 1 represent all the features of the SAD Path language when
 | -p-0-certifiedLender-i | "E8YrUcVI...zVrA" | 5AAGAA-p-0-certifiedLender-i |
 
 
+## Alternative Pathing / Query Languages
+The SAD Path language was chosen over alternatives such as JSONPtr and JSONPath in order to create a more compact representation of a pathing language in the text domain.  Many of the features of the alternatives are not needed for CESR Proof Signatures.  The only token in the language (`-`) is base64 compatible.  The use of field indices in SADs (which require staticly ordered fields) allows for base64 compatible pathing even when the field labels of the target SAD are not base64 compatible.  The language accomplishes the goal of uniquely locating any path in a SAD using minimally sufficient means in a manner that allows it to be embedded in a CESR attachment as base64.  Alternative syntaxes would need to be base64 encoded to be used in a CESR attachment in the text domain thus incurring the additional bandwidth cost of such an encoding.
+
 # CESR Attachments
 
-This specification adds 2 *Counter Four Character Codes* to the Master Code Table and 1 *Small Variable Raw Size Code Type* to the Master Code Table (which results in 3 new code entries.  The additions to the Master Code Table of CESR is shown below:
+This specification adds 2 *Counter Four Character Codes* to the Master Code Table and 1 *Small Variable Raw Size Code Type* to the Master Code Table (which results in 3 new code entries).  The additions to the Master Code Table of CESR is shown below:
 
 |   Code   | Description                                                                         | Code Length | Count or Index Length | Total Length |
 |:--------:|:----------------------------------|:------------:|:-------------:|:------------:|
@@ -188,13 +220,25 @@ This specification adds 2 *Counter Four Character Codes* to the Master Code Tabl
 
 
 ## CESR Signature Attachments
-CESR defines several counter codes for attaching signatures to  serialized CESR event messages.  For KERI event messages, the signatures in the attachments apply to the entire serialized content of the KERI event message.  As all KERI event messages are SADs, the same rules for signing a KERI event message applies to signing SADs for CESR Proof Signatures.  A brief review of CESR signatures for transferable and non-transferable identifiers follows.  In addition, signatures on nested content must be specified.
+CESR defines several counter codes for attaching signatures to serialized CESR event messages.  For KERI event messages, the signatures in the attachments apply to the entire serialized content of the KERI event message.  As all KERI event messages are SADs, the same rules for signing a KERI event message applies to signing SADs for CESR Proof Signatures.  A brief review of CESR signatures for transferable and non-transferable identifiers follows.  In addition, signatures on nested content must be specified.
 
 ### Signing SAD Content
-The rules for signing SAD content require using the serialized version of the SAD as determined by the KERI event message version.  For any KERI event message or ACDC verifiable credential, the version string as found in the `v` field of the message is used to determine the serialization of the SAD and will be one of JSON, CBOR or MessagePack.  All three serializations support static field ordering by insertion order which is required to ensure that the signature is applied to the content over the wire.
+Signatures on SAD content require signing the serialized encoding format of the data ensuring that the signature applies to the data over the wire.  The serialization for any SAD is identified in the version string which can be found in the `v` field of any KERI event message or ACDC credential.   An example version string follows:
+
+
+~~~json
+ {
+     "v": "KERI10JSON00011c_"
+ }
+~~~
+
+where KERI is the identifier of KERI events followed by the hexidecimal major and minor version code and then the serialized encoding format of the event, JSON in this case.  KERI and ACDC support JSON, MessagePack and CBOR currently.  Field ordering is important when apply cryptographic signatures and all serialized encoding formats must support static field ordering.  Serializing a SAD starts with reading the version string from the SAD field (`v` for KERI and ACDC events message) to determine the serialized encoding format of the message.  The serialized encoding format is used to generate the SAID at creation and can not be changed.  The event map is serialized using a library that ensures the static field order perserved across serialization and deserialization and the private keys are used to generate the qualified cryptographic material that represents the signatures over the SAD content.
+
+The same serialized encoding format must be used when nesting a SAD in another SAD.  For example, an ACDC credential that was issued using JSON can only be embedded and presented in a KERI `exn` presentation event message that uses JSON as its serialized encoding format.  That same credential can not be transmitted using CBOR or MessagePack.  Controllers can rely on this restriction when verifying signatures of embedded SADs.  When processing the signature attachments and resolving the data at a given SAD path, the serialization of the outter most SAD can be used at any depth of the traversal.  New verison string processing does not need to occur at nested paths.  However, if credential signature verification is pipelined and process in parallel processes from event message processing, the version string of the nested SAD will still be valid and can be used if needed.
+
 
 ### Signatures with Non-Transferable Identifiers
-Non-transferable identifiers only ever have one public key.  In addition, the identifier prefix is identical to the public key and therefore no KEL is required to validate the signature of a non-transferable identifier.  The attachment code for witness receipt couplets, used for CESR Proof Signatures,  takes this into account.  The four character couner code `-C##` is used for non-transferable identifiers and contains the signing identfier prefix and the signature.  Since the verification key is the identifier prefix and the identifier can not be rotated, all that is required to validate the signature is the identifier prefix, the content signed and the signature.
+Non-transferable identifiers only ever have one public key.  In addition, the identifier prefix is identical to the qualified cryptographic material of the public key and therefore no KEL is required to validate the signature of a non-transferable identifier.  The attachment code for witness receipt couplets, used for CESR Proof Signatures,  takes this into account.  The four character couner code `-C##` is used for non-transferable identifiers and contains the signing identfier prefix and the signature.  Since the verification key can be extracted from the identifier prefix and the identifier can not be rotated, all that is required to validate the signature is the identifier prefix, the data signed and the signature.
 
 ### Signatures with Transferable Identifiers
 Transferable identifiers require full KEL resolution and verfication to determine the correct public key used to sign some content.  In addition, the attachment code used for transferable identifiers, `-F##` must specify the location in the KEL at which point the signature was generated.  To accomplish this, this counter code includes the identifier prefix, the sequence number of the event in the KEL, the digest of the event in the KEL and the indexed signatures (transferable identifiers support multiple public/private keys and require index signatures).  Using all the values, one can verify the signature(s) by retrieving the KEL of the identifier prefix and determine the key state at the sequence number along with validating the digest of the event against the actual event.  Then using the key(s) at the determined key state, validate the signature(s).
@@ -204,11 +248,42 @@ Transferable identifiers require full KEL resolution and verfication to determin
 This specification adds two Counter Four Character Codes to the CESR Master Code Table for attaching and grouping transposable signatures on SAD and nested SAD content.  The first code (`-J##`) is reserved for attaching a SAD path and the associated signatures on the content at the resolution of the SAD Path (either a SAD or its associated SAID).  The second reserved code (`-K##`) is for grouping all SAD Path signature groups under a root path for a given SAD.  The root path in the second grouping code provides signature attachment transposability for embedding SAD content in other messages.
 
 ### SAD Path Signature Group
-The SAD Path Signature Group provides a four character counter code, `-J##`, for attaching an encoded variable length SAD Path along with either transferable index signature groups or non-transferable identifer receipt couplets.  The SAD Path identifies the content that this attachment is signing.  The path must resolve to either a nested SAD (map) or a SAID (string) of an externally provided SAD within the context of the SAD and root path against which this attachment is applied.  Using the sample ACDC SAD above, the follow example shows a signature on the nested `personal` SAD signed by a transferable identifier using the transferable index signature group. The example is annotated with comments, spaces and line feeds for clarity.
+The SAD Path Signature Group provides a four character counter code, `-J##`, for attaching an encoded variable length SAD Path along with either a transferable index signature group or non-transferable identifer receipt couplets.  The SAD Path identifies the content that this attachment is signing.  The path must resolve to either a nested SAD (map) or a SAID (string) of an externally provided SAD within the context of the SAD and root path against which this attachment is applied.  Using the following ACDC SAD embedded in a KERI `exn` message:
+
+~~~json
+{
+  "v": "KERI10JSON00011c_",
+  "t": "exn",
+  "dt": "2020-08-22T17:50:12.988921+00:00"
+  "r": "/credential/offer"
+  "a": {
+    "credential": { // SIGNATURE TARGET OF TRANSPOSED SAD PATH GROUP
+      "v": "ACDC10JSON00011c_",
+      "d": "EBdXt3gIXOf2BBWNHdSXCJnFJL5OuQPyM5K0neuniccM",
+      "i": "EmkPreYpZfFk66jpf3uFv7vklXKhzBrAqjsKAn2EDIPM",
+      "s": "E46jrVPTzlSkUPqGGeIZ8a8FWS7a6s4reAXRZOkogZ2A",
+      "a": {
+        "d": "EgveY4-9XgOcLxUderzwLIr9Bf7V_NHwY1lkFrn9y2PY",
+        "i": "EQzFVaMasUf4cZZBKA0pUbRc9T8yUXRFLyM1JDASYqAA",
+        "dt": "2021-06-09T17:35:54.169967+00:00",
+        "ri": "EymRy7xMwsxUelUauaXtMxTfPAMPAI6FkekwlOjkggt",
+        "LEI": "254900OPPU84GM83MG36",
+        "personal": {
+          "legalName": "John Doe",
+          "home": "Durham"
+        }
+      }
+    }
+  }
+}
+~~~
+
+
+the following signature applies to the nested `credential` SAD signed by a transferable identifier using the transferable index signature group. The example is annotated with comments, spaces and line feeds for clarity.
 
 ~~~
 -JAB              # SAD path signature group counter code 1 following the group
-4AADA-a-personal  # encoded SAD path designation
+6AAEAAA-a-credential  # encoded SAD path designation
 -FAB     # Trans Indexed Sig Groups counter code 1 following group
 E_T2_p83_gRSuAYvGhqV3S0JzYEF2dIa-OCPLbIhBO7Y    # trans prefix of signer for sigs
 -EAB0AAAAAAAAAAAAAAAAAAAAAAB    # sequence number of est event of signer's public keys for sigs
@@ -252,14 +327,14 @@ The root path is the single `-` character meaning that all subsequent SAD Paths 
     "LEI": "254900OPPU84GM83MG36",
     "personal": {
       "legalName": "John Doe",
-      "home-city": "Durham"
+      "city": "Durham"
     }
   }
 ~~~
 
 
 #### Transposable Signature Attachments
-To support nesting of signed SAD content in other SAD content the root path of SAD Path Groups provides transposability of CESR SAD signatures such that the entire SAD Path Group attachment can be transposed to the surrounding SAD by updating the root path to indicate the new location  Extending the sample above, the SAD content is now embedded in a KERI `exn` event message as follows:
+To support nesting of signed SAD content in other SAD content the root path of SAD Path Groups or the path of a SAD Path Signature Group provides transposability of CESR SAD signatures such that a single SAD Path Signature Group or an entire SAD Path Group attachment can be transposed across envelope boundaries by updating the single path or root path to indicate the new location.  Extending the example above, the SAD content is now embedded in a KERI `exn` event message as follows:
 
 
 ~~~json
@@ -267,7 +342,7 @@ To support nesting of signed SAD content in other SAD content the root path of S
   "v": "KERI10JSON00011c_",
   "t": "exn",
   "dt": "2020-08-22T17:50:12.988921+00:00"
-  "r": "/credential/apply"
+  "r": "/credential/offer"
   "a": {
     "v": "ACDC10JSON00011c_",
     "d": "EBdXt3gIXOf2BBWNHdSXCJnFJL5OuQPyM5K0neuniccM",
@@ -281,7 +356,7 @@ To support nesting of signed SAD content in other SAD content the root path of S
       "LEI": "254900OPPU84GM83MG36",
       "personal": {
         "legalName": "John Doe",
-        "home-city": "Durham"
+        "city": "Durham"
       }
     }
   }
@@ -301,7 +376,7 @@ The small variable raw side code reserved for SAD Path encoding is `A` which res
 
 
 # Nested Partial Signatures
-Additional signatures on nested content can be included in a SAD Path Group and are applied to the serialized data at the resolution of a SAD path in a SAD.  Signatures can be applied to a reference to a SAD or an entire nested SAD.  A reference to a SAD is a nested map containing only the SAID (`d`) and the SAID of the schema of the SAD (`s`).  When verifying a CESR Proof Signature, the content at the resolution of the SAD path is the data that was signed.  The choice to sign a reference to a SAD or the full SAD effects how the data may be used in presentations and the rules for verifying the signature.
+Additional signatures on nested content can be included in a SAD Path Group and are applied to the serialized data at the resolution of a SAD path in a SAD.  Signatures can be applied to the SAID or an entire nested SAD.   When verifying a CESR Proof Signature, the content at the resolution of the SAD path is the data that was signed.  The choice to sign a SAID or the full SAD effects how the data may be used in presentations and the rules for verifying the signature.
 
 
 ## Signing Nested SADs
@@ -331,7 +406,7 @@ When signing nested SAD content, the serialization used at the time of signing i
 }
 ~~~
 
-To sign the SAD located at the path `-a`, JSON serialization would be used because the SAD at that path does not have a version field so the version field of its parent is used.  The serialization rules (spacing, field ordering, etc) for a SAD would be used for the SAD and the serialization type and the signature would be applied to the bytes of the JSON for that map.  Any presentation of the signed data must always include the fully nested SAD.  The only valid nesting of this credential would be as follows:
+To sign the SAD located at the path `-a`, JSON serialization would be used because the SAD at that path does not have a version field so the version field of its parent is used.  The serialization rules (spacing, field ordering, etc) for a SAD would be used for the SAD and the serialization encoding format and the signature would be applied to the bytes of the JSON for that map.  Any presentation of the signed data must always include the fully nested SAD.  The only valid nesting of this credential would be as follows:
 
 ~~~json
 {
@@ -361,8 +436,8 @@ To sign the SAD located at the path `-a`, JSON serialization would be used becau
 ~~~
 
 
-## Signing SAD References
-Applying partial signatures to SAD references in a verifiable credential enables blinded disclosure of the signed commitment to the data of the credential as well as selective disclosure of the individual sections of the credential.  Consider the following theoretical credential (we are calling this credential theoretical because it would never existing fully in this state):
+## Signing SAID
+Applying signatures to SADs with SAIDs in place of fully expanded SAD content enables compact credentials for domains with bandwidth restrictions such as IoT.  Consider the following fully expanded credential:
 
 
 ~~~json
@@ -379,31 +454,33 @@ Applying partial signatures to SAD references in a verifiable credential enables
       "LEI": "254900OPPU84GM83MG36",
       "legalName": {
         "d": "E2X8OLaLnM0XRQEYgM5UV3bZmWg3UUn7CP4SoKkvsl-s",
-        "s": "EUrVwESb1zcBINdcWAXvHnR4e0efxrm-_6o_oQ5HDKag",
         "n": "sKHtYSiCdlibuLDS2PTJg1AZXtPhaySZ9O3DoKrRXWY",
-        "first": "John",
+        "first": "John
+        "middle": "William"
         "last": "Doe"
       },
       "address": {
         "d": "E-0luqYSg6cPcMFmhiAz8VBQObZLmTQPrgsr7Z1j6CA4",
-        "s": "EeAnhZeku1mUTFt5EMczSW3M0kx2E9LjXbqL7JIi_m14",
         "n": "XiSoVDNvqV8ldofPyTVqQ-EtVPlkIIQTln9Ai0yI05M",
         "street": "123 Main St",
         "city": "Salt Lake City",
-        "state": "Utah"
+        "state": "Utah",
+        "zipcode": "84157"
       },
       "phone": {
         "d": "E6lty8H2sA_1acq8zg89_kqF194DbF1cDpwA7UPtwjPQ",
-        "s": "ERyBPp4rDxbVCQ3cNTSYdmBjF7bD5_ChistY-ZRm_cLc",
         "n": "_XKNVntbcIjp12DmsAGhv-R7JRwuzjD6KCHC7Fw3zvU"
-        "mobile": "555-121-3434"
+        "mobile": "555-121-3434",
+        "home": "555-121-3435",
+        "work": "555-121-3436",
+        "fax": "555-121-3437"
       }
     }
   }
 }
 ~~~
 
-The three nested blocks of the `a` block `legalName`, `address` and `phone` contain all the fields necessary to create a credential with partial SAD signatures over the values in those three blocks.  Each nested SAD MUST be a SAD (contain SAID field, `d` in our example), must have a field that references the SAID of the JSON Schema defined for the SAD, `s` in our example and must contain a random nonce field, `n` in our example.    With these fields in place in each of the nested SADs, the signed credential would be as follows:
+The three nested blocks of the `a` block `legalName`, `address` and `phone` are SADs with a SAID in the `d` field and are candidates for SAID replacement in an issued credential.  A compact credential can be created and signed by replacing those three nested blocks with the SAID of each nested SAD.  The schema for this verifiable credential would need to specify conditional subschema for the field labels at each nesting location that requires the full schema of the nested SAD or a string for the SAID.  The commitment to a SAID in place of a SAD contains nearly the same cryptographic integrity as a commitment to the SAD itself since the SAID is the qualified cryptographic material of a digest of the SAD.  The same credential could be converted to a compact credential containing the SAIDs of each nested block and signed as follows:
 
 ~~~json
 {
@@ -417,28 +494,16 @@ The three nested blocks of the `a` block `legalName`, `address` and `phone` cont
      "dt": "2021-06-09T17:35:54.169967+00:00",
      "ri": "EymRy7xMwsxUelUauaXtMxTfPAMPAI6FkekwlOjkggt",
      "LEI": "254900OPPU84GM83MG36",
-     "legalName": {
-       "d": "E2X8OLaLnM0XRQEYgM5UV3bZmWg3UUn7CP4SoKkvsl-s",
-       "s": "EUrVwESb1zcBINdcWAXvHnR4e0efxrm-_6o_oQ5HDKag"
-     }
-     "address": {
-       "d": "E-0luqYSg6cPcMFmhiAz8VBQObZLmTQPrgsr7Z1j6CA4",
-       "s": "EeAnhZeku1mUTFt5EMczSW3M0kx2E9LjXbqL7JIi_m14"
-     }
-     "phone": {
-       "d": "E6lty8H2sA_1acq8zg89_kqF194DbF1cDpwA7UPtwjPQ",
-       "s": "ERyBPp4rDxbVCQ3cNTSYdmBjF7bD5_ChistY-ZRm_cLc"
-     }
+     "legalName": "E2X8OLaLnM0XRQEYgM5UV3bZmWg3UUn7CP4SoKkvsl-s",
+     "address": "E-0luqYSg6cPcMFmhiAz8VBQObZLmTQPrgsr7Z1j6CA4",
+     "phone": "E6lty8H2sA_1acq8zg89_kqF194DbF1cDpwA7UPtwjPQ"
    }
 }
 ~~~
 
-Each of the nested SADs have been replaced with SAD references and 4 signatures are supplied, a signature at the top level and one each for the SAD reference now at `legalName`, `address` and `phone`.  It is important to note that this version of the credential is the one issued to the holder and the signature over the entire credential is on the serialized data of this version of the credential.  The full SAD data of the three nested blocks would be delivered out of band from the signed credential.  The top level schema would describe the blocks as shown in the signed credential but also specify the exact value for each of the schema SAIDs in the signed SAD references.  The credential signature becomes a cryptographic commitment to the contents of the overall credential as well as the content of each of the block yet will still validate the presented credential.
+It is important to note that if this version of the credential is the one issued to the holder and the signature over the entire credential is on the serialized data of this version of the credential it is the only version that can be presented.  The full SAD data of the three nested blocks would be delivered out of band from the signed credential.  The top level schema would describe the blocks with conditional subschema for each section.  The credential signature becomes a cryptographic commitment to the contents of the overall credential as well as the content of each of the blocks and will still validate the presented credential with significantly less bandwidth.
 
-
-When performing a blinded presentation, the entire signed credential would be presented, proving cryptographically the authenticity of the data without revealing the data of the three nested SAD references.  This technique could be useful for enforcing terms and conditions or non-disclosure agrees on the nested data if those terms were included in the signed credential and a receipt was required from the recipient of the data before the data in the nested SADs was revealed.  The recipient would be able to check the schema to ensure that the data in the nested SAD will conform to agreed upon data because providing a receipt without that data being revealed.
-
-Selective disclosure is accomplished by providing only the signatures of the SAD references that will be revealed out of band.  The recipient of the data can verify the signatures on the entire credential and the signatures on the SAD references they received while not seeing any data on the nested portions not being revealed.
+With this approach, credential presentation request and exchange protocols can be created that modify the schema with the conditional subschema, removing the conditions that allow for SAIDs in place of the required (or presented) nested blocks.  The modified schema can be used in such a protocol to indicate the required sections to be delivered out of bounds or as a commitment to provide the nested blocks after the crendential presentation has occurred.
 
 
 
