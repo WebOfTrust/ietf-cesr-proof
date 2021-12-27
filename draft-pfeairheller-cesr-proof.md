@@ -95,7 +95,7 @@ CESR Proof Signatures are an extension to the Composable Event Streaming Represe
 
 # Introduction
 
-Composable Event Streaming Representation (CESR) is a dual text-binary encoding format that has the unique property of text-binary concatenation composability. The CESR specification not only provides the definition of the streaming format but also the codes needed for creating and sharing all event types and signatures on all event types for the Key Event Receipt Infrastructure (KERI). While all KERI event messages are self-addressing data (SAD), there is a broad class of SADs that are not KERI events but that require signature attachments. ACDC Verifiable credentials fit into this class of SADs. With more complex data structures represented as SADs, such as verifiable credentials, there is a need to provide signature attachments on nested subsets of SADs. Similar to indices in indexed controller signatures in KERI that specify the location of the public key they represent, nested SAD signatures need a path mechanism to specify the exact location of the nested content that they are signing. CESR Proof Signatures provide this mechanism with the CESR SAD Path Language and new attachment codes, detailed in this specification.
+Composable Event Streaming Representation (CESR) is a dual text-binary encoding format that has the unique property of text-binary concatenation composability. The CESR specification not only provides the definition of the streaming format but also the codes needed for creating and sharing all event types and signatures on all event types for the Key Event Receipt Infrastructure (KERI) [KERI]. While all KERI event messages are self-addressing data (SAD), there is a broad class of SADs that are not KERI events but that require signature attachments. ACDC Verifiable credentials fit into this class of SADs. With more complex data structures represented as SADs, such as verifiable credentials, there is a need to provide signature attachments on nested subsets of SADs. Similar to indices in indexed controller signatures in KERI that specify the location of the public key they represent, nested SAD signatures need a path mechanism to specify the exact location of the nested content that they are signing. CESR Proof Signatures provide this mechanism with the CESR SAD Path Language and new attachment codes, detailed in this specification.
 
 ## Streamable SADs
 A primary goal of CESR Proof Signatures is to allow any signed self-addressing data (SAD) to be streamed inline with any other CESR content.  In support of that goal, CESR Proof Signatures leverage CESR attachments to define a signature scheme that can be attached to any SAD content serialized as JSON, MessagePack or CBOR.  Using this capability, SADs signed with CESR Proof Signatures can be streamed inline in either the text or binary domain alongside any other KERI event message over, for example TCP or UDP.  In addition, signed SADs can be transported via HTTP as a CESR HTTP Request (todo: reference needed).
@@ -254,8 +254,8 @@ The SAD Path Signature Group provides a four character counter code, `-J##`, for
 {
   "v": "KERI10JSON00011c_",
   "t": "exn",
-  "dt": "2020-08-22T17:50:12.988921+00:00"
-  "r": "/credential/offer"
+  "dt": "2020-08-22T17:50:12.988921+00:00",
+  "r": "/credential/offer",
   "a": {
     "credential": { // SIGNATURE TARGET OF TRANSPOSED SAD PATH GROUP
       "v": "ACDC10JSON00011c_",
@@ -319,7 +319,7 @@ The root path is the single `-` character meaning that all subsequent SAD Paths 
   "d": "EBdXt3gIXOf2BBWNHdSXCJnFJL5OuQPyM5K0neuniccM",
   "i": "EmkPreYpZfFk66jpf3uFv7vklXKhzBrAqjsKAn2EDIPM",
   "s": "E46jrVPTzlSkUPqGGeIZ8a8FWS7a6s4reAXRZOkogZ2A",
-  "a": {   // SIGNATURE TARGET OF SAD PATH GROUP
+  "a": {  // SIGNATURE TARGET OF SAD PATH GROUP
     "d": "EgveY4-9XgOcLxUderzwLIr9Bf7V_NHwY1lkFrn9y2PY",
     "i": "EQzFVaMasUf4cZZBKA0pUbRc9T8yUXRFLyM1JDASYqAA",
     "dt": "2021-06-09T17:35:54.169967+00:00",
@@ -330,6 +330,7 @@ The root path is the single `-` character meaning that all subsequent SAD Paths 
       "city": "Durham"
     }
   }
+}
 ~~~
 
 
@@ -348,7 +349,7 @@ To support nesting of signed SAD content in other SAD content the root path of S
     "d": "EBdXt3gIXOf2BBWNHdSXCJnFJL5OuQPyM5K0neuniccM",
     "i": "EmkPreYpZfFk66jpf3uFv7vklXKhzBrAqjsKAn2EDIPM",
     "s": "E46jrVPTzlSkUPqGGeIZ8a8FWS7a6s4reAXRZOkogZ2A",
-    "a": {   // SIGNATURE TARGET OF TRANSPOSED SAD PATH GROUP
+    "a": { // SIGNATURE TARGET OF TRANSPOSED SAD PATH GROUP
       "d": "EgveY4-9XgOcLxUderzwLIr9Bf7V_NHwY1lkFrn9y2PY",
       "i": "EQzFVaMasUf4cZZBKA0pUbRc9T8yUXRFLyM1JDASYqAA",
       "dt": "2021-06-09T17:35:54.169967+00:00",
@@ -360,6 +361,7 @@ To support nesting of signed SAD content in other SAD content the root path of S
       }
     }
   }
+}
 ~~~
 
 The same signature gets transposed to the outer `exn` SAD by updating the root path of the `-K##` attachment:
@@ -436,8 +438,8 @@ To sign the SAD located at the path `-a`, JSON serialization would be used becau
 ~~~
 
 
-## Signing SAID
-Applying signatures to SADs with SAIDs in place of fully expanded SAD content enables compact credentials for domains with bandwidth restrictions such as IoT.  Consider the following fully expanded credential:
+## Signing SAIDs
+Applying signatures to a SAD with SAIDs in place of fully expanded nested SAD content enables compact credentials for domains with bandwidth restrictions such as IoT.  Consider the following fully expanded credential:
 
 
 ~~~json
