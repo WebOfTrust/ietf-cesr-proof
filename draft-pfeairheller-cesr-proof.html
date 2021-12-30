@@ -1,0 +1,1924 @@
+<!DOCTYPE html>
+<html lang="en" class="Internet-Draft">
+<head>
+<meta charset="utf-8">
+<meta content="Common,Latin" name="scripts">
+<meta content="initial-scale=1.0" name="viewport">
+<title>CESR Proof Signatures</title>
+<meta content="Phil Feairheller" name="author">
+<meta content="
+       CESR Proof Signatures are an extension to the Composable Event Streaming Representation   that provide transposable cryptographic signature attachments on self-addressing data (SAD)  . A SAD (such as an Authentic Chained Data Container (ACDC) Verifiable Credential  ) may be signed with a CESR Proof Signature and streamed alongside any other CESR content.  In addition, a signed SAD can be embedded inside another SAD and the CESR proof signature attachment can be transposed across envelope boundaries and streamed without losing any cryptographic integrity. 
+    " name="description">
+<meta content="xml2rfc 3.12.0" name="generator">
+<meta content="Internet-Draft" name="keyword">
+<meta content="draft-pfeairheller-cesr-proof-latest" name="ietf.draft">
+<!-- Generator version information:
+  xml2rfc 3.12.0
+    Python 3.9.7
+    appdirs 1.4.4
+    ConfigArgParse 1.3
+    google-i18n-address 2.5.0
+    html5lib 1.1
+    intervaltree 3.1.0
+    Jinja2 2.11.3
+    kitchen 1.2.6
+    lxml 4.6.5
+    pycountry 20.7.3
+    pyflakes 2.3.1
+    PyYAML 5.4.1
+    requests 2.26.0
+    setuptools 52.0.0
+    six 1.16.0
+-->
+<link href="draft-pfeairheller-cesr-proof.xml" rel="alternate" type="application/rfc+xml">
+<link href="#copyright" rel="license">
+<style type="text/css">@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-vietnamese.woff2') format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+
+@font-face {
+  font-family: 'Lora';
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Italic'), local('Lora-Italic'), url('https://martinthomson.github.io/rfc-css/fonts/lora-italic-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-cyrillic.woff2') format('woff2');
+  unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-vietnamese.woff2') format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Lora Regular'), local('Lora-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/lora-regular-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-cyrillic-ext.woff2') format('woff2');
+  unicode-range: U+0460-052F, U+1C80-1C88, U+20B4, U+2DE0-2DFF, U+A640-A69F, U+FE2E-FE2F;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-cyrillic.woff2') format('woff2');
+  unicode-range: U+0400-045F, U+0490-0491, U+04B0-04B1, U+2116;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-vietnamese.woff2') format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Lora';
+  font-style: normal;
+  font-weight: 700;
+  font-display: swap;
+  src: local('Lora Bold'), local('Lora-Bold'), url('https://martinthomson.github.io/rfc-css/fonts/lora-bold-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Cabin Condensed';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: local('Cabin Condensed SemiBold'), local('CabinCondensed-SemiBold'), url('https://martinthomson.github.io/rfc-css/fonts/cabincondensed-semibold-vietnamese.woff2') format('woff2');
+  unicode-range: U+0102-0103, U+0110-0111, U+1EA0-1EF9, U+20AB;
+}
+@font-face {
+  font-family: 'Cabin Condensed';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: local('Cabin Condensed SemiBold'), local('CabinCondensed-SemiBold'), url('https://martinthomson.github.io/rfc-css/fonts/cabincondensed-semibold-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Cabin Condensed';
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: local('Cabin Condensed SemiBold'), local('CabinCondensed-SemiBold'), url('https://martinthomson.github.io/rfc-css/fonts/cabincondensed-semibold-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+@font-face {
+  font-family: 'Oxygen Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Oxygen Mono'), local('OxygenMono-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/oxygenmono-regular-latin-ext.woff2') format('woff2');
+  unicode-range: U+0100-024F, U+0259, U+1E00-1EFF, U+2020, U+20A0-20AB, U+20AD-20CF, U+2113, U+2C60-2C7F, U+A720-A7FF;
+}
+@font-face {
+  font-family: 'Oxygen Mono';
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: local('Oxygen Mono'), local('OxygenMono-Regular'), url('https://martinthomson.github.io/rfc-css/fonts/oxygenmono-regular-latin.woff2') format('woff2');
+  unicode-range: U+0000-00FF, U+0131, U+0152-0153, U+02BB-02BC, U+02C6, U+02DA, U+02DC, U+2000-206F, U+2074, U+20AC, U+2122, U+2191, U+2193, U+2212, U+2215, U+FEFF, U+FFFD;
+}
+
+:root {
+  color-scheme: light dark;
+  --background-color: #fff;
+  --text-color: #222;
+  --title-color: #191919;
+  --link-color: #2a6496;
+  --highlight-color: #f9f9f9;
+  --line-color: #eee;
+  --pilcrow-weak: #ddd;
+  --pilcrow-strong: #bbb;
+  --small-font-size: 14.5px;
+  --font-mono: 'Oxygen Mono', monospace;
+  scrollbar-color: #bbb #eee;
+}
+body {
+  max-width: 600px;
+  margin: 75px auto;
+  padding: 0 5px;
+  color: var(--text-color);
+  background-color: var(--background-color);
+  font: 16px/22px "Lora", serif;
+  scroll-behavior: smooth;
+}
+
+.ears {
+  display: none;
+}
+
+/* headings */
+h1, h2, h3, h4, h5, h6 {
+  font-family: "Cabin Condensed", sans-serif;
+  font-weight: 600;
+  margin: 0.8em 0 0.3em;
+  font-size-adjust: 0.5;
+  color: var(--title-color);
+}
+h1#title {
+  font-size: 32px;
+  line-height: 40px;
+  clear: both;
+}
+h1#title, h1#rfcnum {
+  margin: 1.5em 0 0.2em;
+}
+h1#rfcnum + h1#title {
+  margin: 0.2em 0;
+}
+
+h1, h2, h3 {
+  font-size: 22px;
+  line-height: 27px;
+}
+h4, h5, h6 {
+  font-size: 20px;
+  line-height: 24px;
+}
+
+/* general structure */
+.author {
+  padding-bottom: 0.3em;
+}
+#abstract+p {
+  font-size: 18px;
+  line-height: 24px;
+}
+#abstract+p code, #abstract+p samp, #abstract+p tt {
+  font-size: 16px;
+  line-height: 0;
+}
+
+p {
+  padding: 0;
+  margin: 0.5em 0;
+  text-align: left;
+}
+div {
+  margin: 0;
+}
+.alignRight.art-text {
+  background-color: var(--highlight-color);
+  border: 1px solid var(--line-color);
+  border-radius: 3px;
+  padding: 0.5em 1em 0;
+  margin-bottom: 0.5em;
+}
+.alignRight.art-text pre {
+  padding: 0;
+  width: auto;
+}
+.alignRight {
+  margin: 1em 0;
+}
+.alignRight > *:first-child {
+  border: none;
+  margin: 0;
+  float: right;
+  clear: both;
+}
+.alignRight > *:nth-child(2) {
+  clear: both;
+  display: block;
+  border: none;
+}
+svg {
+  display: block;
+}
+/* font-family isn't space-separated, but =~ will have to do */
+svg[font-family~="monospace" i], svg [font-family~="monospace" i] {
+  font-family: var(--font-mono);
+}
+.alignCenter.art-text {
+  background-color: var(--highlight-color);
+  border: 1px solid var(--line-color);
+  border-radius: 3px;
+  padding: 0.5em 1em 0;
+  margin-bottom: 0.5em;
+}
+.alignCenter.art-text pre {
+  padding: 0;
+  width: auto;
+}
+.alignCenter {
+  margin: 1em 0;
+}
+.alignCenter > *:first-child {
+  border: none;
+  /* this isn't optimal, but it's an existence proof.  PrinceXML doesn't
+     support flexbox yet.
+  */
+  display: table;
+  margin: 0 auto;
+}
+
+/* lists */
+ol, ul {
+  padding: 0;
+  margin: 0 0 0.5em 2em;
+}
+ol ol, ul ul, ol ul, ul ol {
+  margin-left: 1em;
+}
+li {
+  margin: 0 0 0.25em 0;
+}
+.ulCompact li {
+  margin: 0;
+}
+ul.empty, .ulEmpty {
+  list-style-type: none;
+}
+ul.empty li, .ulEmpty li {
+  margin-top: 0.5em;
+}
+ul.compact, .ulCompact,
+ol.compact, .olCompact {
+  line-height: 100%;
+  margin: 0 0 0 2em;
+}
+
+/* definition lists */
+dl {
+}
+dl > dt {
+  float: left;
+  margin-right: 1em;
+}
+dl > dd {
+  margin-bottom: .8em;
+  min-height: 1.3em;
+}
+dl.compact > dd, .dlCompact > dd {
+  margin-bottom: 0em;
+}
+dl > dd > dl {
+  margin-top: 0.5em;
+  margin-bottom: 0em;
+}
+dd.break {
+  display: none;
+}
+
+/* links */
+a, a[href].selfRef:hover {
+  text-decoration: none;
+}
+a[href].selfRef {
+  color: var(--text-color);
+}
+a[href] {
+  color: var(--link-color);
+}
+a[href]:hover {
+  text-decoration: underline;
+}
+a[href].selfRef:hover {
+  background-color: var(--highlight-color);
+}
+a.xref {
+  white-space: nowrap;
+}
+
+/* Figures */
+tt, code, pre {
+  background-color: var(--highlight-color);
+  font: 14px/22px var(--font-mono);
+}
+tt, code {
+  /* changing the font for inline elements leads to different ascender
+     and descender heights; as we want to retain baseline alignment,
+     remove leading to avoid altering the final height of lines */
+  line-height: 0;
+}
+pre {
+  border: 1px solid var(--line-color);
+  font-size: 13.5px;
+  line-height: 16px;
+  letter-spacing: -0.2px;
+  margin: 5px;
+  padding: 5px;
+}
+img {
+  max-width: 100%;
+}
+figure {
+  margin: 0.5em 0;
+  padding: 0;
+}
+figure blockquote {
+  margin: 0.8em 0.4em 0.4em;
+}
+figcaption, caption {
+  font-style: italic;
+  margin: 0.5em 1.5em;
+  text-align: left;
+}
+@media screen {
+  pre, svg {
+    display: inline-block;
+    overflow-x: auto;
+  }
+  pre {
+    max-width: 100%;
+    width: calc(100% - 22px - 1em);
+  }
+  svg {
+    max-width: calc(100% - 22px - 1em);
+  }
+  figure pre {
+    display: block;
+    width: calc(100% - 25px);
+  }
+  pre + .pilcrow, svg + .pilcrow {
+    display: inline-block;
+    vertical-align: text-bottom;
+    padding-bottom: 8px;
+  }
+}
+
+/* aside, blockquote */
+aside, blockquote {
+  margin-left: 0;
+  padding: 0 2em;
+  font-style: italic;
+}
+blockquote {
+  margin: 1em 0;
+}
+cite {
+  display: block;
+  text-align: right;
+  font-style: italic;
+}
+
+/* tables */
+table {
+  max-width: 100%;
+  margin: 0 0 1em;
+  border-collapse: collapse;
+}
+table.right {
+  margin-left: auto;
+}
+table.center {
+  margin-left: auto;
+  margin-right: auto;
+}
+table.left {
+  margin-right: auto;
+}
+thead, tbody {
+  border: 1px solid var(--line-color);
+}
+th, td {
+  text-align: left;
+  vertical-align: top;
+  padding: 5px 10px;
+}
+th {
+  background-color: var(--line-color);
+}
+tr:nth-child(2n) > td {
+  background-color: var(--background-color);
+}
+tr:nth-child(2n+1) > td {
+  background-color: var(--highlight-color);
+}
+thead+tbody > tr:nth-child(2n) > td {
+  background-color: var(--highlight-color);
+}
+thead+tbody > tr:nth-child(2n+1) > td {
+  background-color: var(--background-color);
+}
+table caption {
+  margin: 0;
+  padding: 3px 0 3px 1em;
+}
+table p {
+  margin: 0;
+}
+
+/* pilcrow */
+a.pilcrow {
+  margin-left: 3px;
+  opacity: 0.2;
+  user-select: none;
+}
+a.pilcrow[href] { color: var(--pilcrow-weak); }
+a.pilcrow[href]:hover { text-decoration: none; }
+@media not print {
+  :hover > a.pilcrow {
+    opacity: 1;
+  }
+  a.pilcrow[href]:hover {
+    color: var(--pilcrow-strong);
+    background-color: transparent;
+  }
+}
+@media print {
+  a.pilcrow {
+    display: none;
+  }
+}
+
+/* misc */
+hr {
+  border: 0;
+  border-top: 1px solid var(--line-color);
+}
+.bcp14 {
+  font-variant: small-caps;
+}
+
+.role {
+  font-variant: all-small-caps;
+}
+
+/* info block */
+#identifiers {
+  margin: 0;
+  font-size: var(--small-font-size);
+  line-height: 18px;
+  --identifier-width: 8em;
+}
+#identifiers dt {
+  width: var(--identifier-width);
+  margin: 0;
+  clear: left;
+  float: left;
+  text-align: right;
+}
+#identifiers dd {
+  margin: 0 0 0 calc(1em + var(--identifier-width));
+  min-width: 5em;
+}
+#identifiers .authors .author {
+  display: inline-block;
+  margin-right: 1.5em;
+}
+#identifiers .authors .org {
+  font-style: italic;
+}
+
+/* The prepared/rendered info at the very bottom of the page */
+.docInfo {
+  color: #999;
+  font-size: 0.9em;
+  font-style: italic;
+  margin-top: 2em;
+}
+.docInfo .prepared {
+  float: left;
+}
+.docInfo .prepared {
+  float: right;
+}
+
+/* table of contents */
+#toc {
+  padding: 0.75em 0 2em 0;
+  margin-bottom: 1em;
+}
+#toc nav ul {
+  margin: 0 0.5em 0 0;
+  padding: 0;
+  list-style: none;
+}
+#toc nav li {
+  line-height: 1.3em;
+  margin: 0.75em 0;
+  padding-left: 1.2em;
+  text-indent: -1.2em;
+}
+#toc a.xref {
+  white-space: normal;
+}
+/* references */
+.references dt {
+  text-align: right;
+  font-weight: bold;
+  min-width: 7em;
+}
+.references dd {
+  margin-left: 8em;
+  overflow: auto;
+}
+
+.refInstance {
+  margin-bottom: 1.25em;
+}
+
+.references .ascii {
+  margin-bottom: 0.25em;
+}
+
+/* index */
+#rfc\.index\.index + ul {
+  margin-left: 0;
+}
+
+/* authors */
+address.vcard {
+  font-style: normal;
+  margin: 1em 0;
+}
+address.vcard .nameRole {
+  font-weight: 700;
+  margin-left: 0;
+}
+address.vcard .label {
+  margin: 0.5em 0;
+}
+address.vcard .type {
+  display: none;
+}
+.alternative-contact {
+  margin: 1.5em 0 1em;
+}
+hr.addr {
+  border-top: 1px dashed;
+  margin: 0;
+  color: #ddd;
+  max-width: calc(100% - 16px);
+}
+@media (min-width: 500px) {
+  #authors-addresses > section {
+    column-count: 2;
+    column-gap: 20px;
+  }
+  #authors-addresses > section > h2 {
+    column-span: all;
+  }
+  /* hack for break-inside: avoid-column */
+  #authors-addresses address {
+    display: inline-block;
+    break-inside: avoid-column;
+  }
+}
+
+.rfcEditorRemove p:first-of-type {
+  font-style: italic;
+}
+.cref {
+  background-color: rgba(249, 232, 105, 0.3);
+  padding: 2px 4px;
+}
+.crefSource {
+  font-style: italic;
+}
+/* alternative layout for smaller screens */
+@media screen and (max-width: 929px) {
+  #toc {
+    position: fixed;
+    z-index: 2;
+    top: 0;
+    right: 0;
+    padding: 0;
+    margin: 0;
+    border-bottom: 1px solid #ccc;
+    opacity: 0.6;
+  }
+  #toc.active {
+      opacity: 1;
+  }
+  #toc h2 {
+    margin: 0;
+    padding: 2px 0 2px 6px;
+    padding-right: 1em;
+    font-size: 18px;
+    line-height: 24px;
+    min-width: 190px;
+    text-align: right;
+    background-color: #444;
+    color: white;
+    cursor: pointer;
+  }
+  #toc h2::before { /* css hamburger */
+    float: right;
+    position: relative;
+    width: 1em;
+    height: 1px;
+    left: -164px;
+    margin: 8px 0 0 0;
+    background: white none repeat scroll 0 0;
+    box-shadow: 0 4px 0 0 white, 0 8px 0 0 white;
+    content: "";
+  }
+  #toc nav {
+    display: none;
+    background-color: var(--background-color);
+    padding: 0.5em 1em 1em;
+    overflow: auto;
+    overscroll-behavior: contain;
+    height: calc(100vh - 48px);
+    border-left: 1px solid #ddd;
+  }
+  #toc.active nav {
+    display: block;
+  }
+  /* Make the collapsed ToC header render white on gray also when it's a link */
+  #toc h2 a,
+  #toc h2 a:link,
+  #toc h2 a:focus,
+  #toc h2 a:hover,
+  #toc a.toplink,
+  #toc a.toplink:hover {
+    color: white;
+    background-color: #444;
+    text-decoration: none;
+  }
+  #toc a.toplink {
+    margin-top: 2px;
+  }
+}
+
+/* alternative layout for wide screens */
+@media screen and (min-width: 930px) {
+  body {
+    padding-right: 360px;
+    padding-right: calc(min(180px + 20%, 500px));
+  }
+  #toc {
+    position: fixed;
+    bottom: 0;
+    right: 0;
+    right: calc(50vw - 480px);
+    width: 312px;
+    margin: 0;
+    padding: 0;
+    z-index: 1;
+  }
+  #toc h2 {
+    margin: 0;
+    padding: 0.25em 1em 1em 0;
+  }
+  #toc nav {
+    display: block;
+    height: calc(90vh - 84px);
+    bottom: 0;
+    padding: 0.5em 0 2em;
+    overflow: auto;
+    overscroll-behavior: contain;
+    scrollbar-width: thin;
+  }
+  #toc nav > ul  {
+    margin-bottom: 2em;
+  }
+  #toc ul {
+    margin: 0 0 0 4px;
+    font-size: var(--small-font-size);
+  }
+  #toc ul p, #toc ul li {
+    margin: 2px 0;
+    line-height: 22px;
+  }
+  img { /* future proofing */
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+/* pagination */
+@media print {
+  body {
+    width: 100%;
+  }
+  p {
+    orphans: 3;
+    widows: 3;
+  }
+  #n-copyright-notice {
+    border-bottom: none;
+  }
+  #toc, #n-introduction {
+    page-break-before: always;
+  }
+  #toc {
+    border-top: none;
+    padding-top: 0;
+  }
+  figure, pre {
+    page-break-inside: avoid;
+  }
+  figure {
+    overflow: scroll;
+  }
+  h1, h2, h3, h4, h5, h6 {
+    page-break-after: avoid;
+  }
+  h2+*, h3+*, h4+*, h5+*, h6+* {
+    page-break-before: avoid;
+  }
+  pre {
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    font-size: 10pt;
+  }
+  table {
+    border: 1px solid #ddd;
+  }
+  td {
+    border-top: 1px solid #ddd;
+  }
+}
+
+@page :first {
+  padding-top: 0;
+  @top-left {
+    content: normal;
+    border: none;
+  }
+  @top-center {
+    content: normal;
+    border: none;
+  }
+  @top-right {
+    content: normal;
+    border: none;
+  }
+}
+
+@page {
+  size: A4;
+  margin-bottom: 45mm;
+  padding-top: 20px;
+}
+
+/* Changes introduced to fix issues found during implementation */
+
+/* Separate body from document info even without intervening H1 */
+section {
+  clear: both;
+}
+
+/* Top align author divs, to avoid names without organization dropping level with org names */
+.author {
+  vertical-align: top;
+}
+
+/* Style section numbers with more space between number and title */
+.section-number {
+  padding-right: 0.5em;
+}
+
+/* Add styling for a link in the ToC that points to the top of the document */
+a.toplink {
+  float: right;
+  margin: 8px 0.5em 0;
+}
+
+/* Fix the dl styling to match the RFC 7992 attributes */
+dl > dt,
+dl.dlParallel > dt {
+  float: left;
+  margin-right: 1em;
+}
+dl.dlNewline > dt {
+  float: none;
+}
+
+/* Provide styling for table cell text alignment */
+table .text-left, table .text-left {
+  text-align: left;
+}
+table .text-center, table .text-center {
+  text-align: center;
+}
+table .text-right, table .text-right {
+  text-align: right;
+}
+
+/* Make the alternative author contact information look less like just another
+   author, and group it closer with the primary author contact information */
+.alternative-contact {
+  margin: 0.5em 0 0.25em 0;
+}
+address .non-ascii {
+  margin: 0 0 0 2em;
+}
+
+/* With it being possible to set tables with alignment
+  left, center, and right, { width: 100%; } does not make sense */
+table {
+  width: auto;
+}
+
+/* Avoid reference text that sits in a block with very wide left margin,
+   because of a long floating dt label.*/
+.references dd {
+  overflow: visible;
+}
+
+/* Control caption placement */
+caption {
+  caption-side: bottom;
+}
+
+/* Limit the width of the author address vcard, so names in right-to-left
+   script don't end up on the other side of the page. */
+
+address.vcard {
+  max-width: 20em;
+  margin-right: auto;
+}
+
+/* For address alignment dependent on LTR or RTL scripts */
+address div.left {
+  text-align: left;
+}
+address div.right {
+  text-align: right;
+}
+
+/* Give the table caption label the same styling as the figcaption */
+
+@media print {
+  .toplink {
+    display: none;
+  }
+
+  /* avoid overwriting the top border line with the ToC header */
+  #toc {
+    padding-top: 1px;
+  }
+
+  /* Avoid page breaks inside dl and author address entries */
+  dd {
+    page-break-before: avoid;
+  }
+  .vcard {
+    page-break-inside: avoid;
+  }
+
+}
+/* Tweak the bcp14 keyword presentation */
+.bcp14 {
+  font-variant: small-caps;
+  font-weight: bold;
+  font-size: 0.9em;
+}
+
+/* Dark mode. */
+@media (prefers-color-scheme: dark) {
+:root {
+  --background-color: #121212;
+  --text-color: #f0f0f0;
+  --title-color: #fff;
+  --link-color: #4da4f0;
+  --highlight-color: #282828;
+  --line-color: #444;
+  --pilcrow-weak: #444;
+  --pilcrow-strong: #666;
+  scrollbar-color: #777 #333;
+}
+/* Trick: a prefix match works because only black and white are allowed */
+svg [stroke="black"], svg [stroke^="#000"] {
+  stroke: var(--text-color);
+}
+svg [stroke="white"], svg [stroke^="#fff"] {
+  stroke: var(--background-color);
+}
+svg [fill="black"], svg [fill^="#000"], svg :not([fill]) {
+  fill: var(--text-color);
+}
+svg [stroke="fill"], svg [fill^="#fff"] {
+  fill: var(--background-color);
+}
+}
+</style>
+
+</head>
+<body>
+<table class="ears">
+<thead><tr>
+<td class="left">Internet-Draft</td>
+<td class="center">CESR-PROOF</td>
+<td class="right">December 2021</td>
+</tr></thead>
+<tfoot><tr>
+<td class="left">Feairheller</td>
+<td class="center">Expires 30 June 2022</td>
+<td class="right">[Page]</td>
+</tr></tfoot>
+</table>
+<div id="external-metadata" class="document-information"></div>
+<div id="internal-metadata" class="document-information">
+<dl id="identifiers">
+<dt class="label-workgroup">Workgroup:</dt>
+<dd class="workgroup">TODO Working Group</dd>
+<dt class="label-internet-draft">Internet-Draft:</dt>
+<dd class="internet-draft">draft-pfeairheller-cesr-proof-latest</dd>
+<dt class="label-published">Published:</dt>
+<dd class="published">
+<time datetime="2021-12-27" class="published">27 December 2021</time>
+    </dd>
+<dt class="label-intended-status">Intended Status:</dt>
+<dd class="intended-status">Informational</dd>
+<dt class="label-expires">Expires:</dt>
+<dd class="expires"><time datetime="2022-06-30">30 June 2022</time></dd>
+<dt class="label-authors">Author:</dt>
+<dd class="authors">
+<div class="author">
+      <div class="author-name">P. Feairheller</div>
+<div class="org">GLEIF</div>
+</div>
+</dd>
+</dl>
+</div>
+<h1 id="title">CESR Proof Signatures</h1>
+<section id="section-abstract">
+      <h2 id="abstract"><a href="#abstract" class="selfRef">Abstract</a></h2>
+<p id="section-abstract-1">CESR Proof Signatures are an extension to the Composable Event Streaming Representation <span>[<a href="#CESR" class="xref">CESR</a>]</span> that provide transposable cryptographic signature attachments on self-addressing data (SAD) <span>[<a href="#SAID" class="xref">SAID</a>]</span>. A SAD (such as an Authentic Chained Data Container (ACDC) Verifiable Credential <span>[<a href="#ACDC" class="xref">ACDC</a>]</span>) may be signed with a CESR Proof Signature and streamed alongside any other CESR content.  In addition, a signed SAD can be embedded inside another SAD and the CESR proof signature attachment can be transposed across envelope boundaries and streamed without losing any cryptographic integrity.<a href="#section-abstract-1" class="pilcrow">¶</a></p>
+</section>
+<section class="note rfcEditorRemove" id="section-note.1">
+      <h2 id="name-discussion-venues">
+<a href="#name-discussion-venues" class="section-name selfRef">Discussion Venues</a>
+      </h2>
+<p id="section-note.1-1">This note is to be removed before publishing as an RFC.<a href="#section-note.1-1" class="pilcrow">¶</a></p>
+<p id="section-note.1-2">Source for this draft and an issue tracker can be found at
+    <span><a href="https://github.com/WebOfTrust/ietf-cesr-proof">https://github.com/WebOfTrust/ietf-cesr-proof</a></span>.<a href="#section-note.1-2" class="pilcrow">¶</a></p>
+</section>
+<div id="status-of-memo">
+<section id="section-boilerplate.1">
+        <h2 id="name-status-of-this-memo">
+<a href="#name-status-of-this-memo" class="section-name selfRef">Status of This Memo</a>
+        </h2>
+<p id="section-boilerplate.1-1">
+        This Internet-Draft is submitted in full conformance with the
+        provisions of BCP 78 and BCP 79.<a href="#section-boilerplate.1-1" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.1-2">
+        Internet-Drafts are working documents of the Internet Engineering Task
+        Force (IETF). Note that other groups may also distribute working
+        documents as Internet-Drafts. The list of current Internet-Drafts is
+        at <span><a href="https://datatracker.ietf.org/drafts/current/">https://datatracker.ietf.org/drafts/current/</a></span>.<a href="#section-boilerplate.1-2" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.1-3">
+        Internet-Drafts are draft documents valid for a maximum of six months
+        and may be updated, replaced, or obsoleted by other documents at any
+        time. It is inappropriate to use Internet-Drafts as reference
+        material or to cite them other than as "work in progress."<a href="#section-boilerplate.1-3" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.1-4">
+        This Internet-Draft will expire on 30 June 2022.<a href="#section-boilerplate.1-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="copyright">
+<section id="section-boilerplate.2">
+        <h2 id="name-copyright-notice">
+<a href="#name-copyright-notice" class="section-name selfRef">Copyright Notice</a>
+        </h2>
+<p id="section-boilerplate.2-1">
+            Copyright (c) 2021 IETF Trust and the persons identified as the
+            document authors. All rights reserved.<a href="#section-boilerplate.2-1" class="pilcrow">¶</a></p>
+<p id="section-boilerplate.2-2">
+            This document is subject to BCP 78 and the IETF Trust's Legal
+            Provisions Relating to IETF Documents
+            (<span><a href="https://trustee.ietf.org/license-info">https://trustee.ietf.org/license-info</a></span>) in effect on the date of
+            publication of this document. Please review these documents
+            carefully, as they describe your rights and restrictions with
+            respect to this document. Code Components extracted from this
+            document must include Revised BSD License text as described in
+            Section 4.e of the Trust Legal Provisions and are provided without
+            warranty as described in the Revised BSD License.<a href="#section-boilerplate.2-2" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="toc">
+<section id="section-toc.1">
+        <a href="#" onclick="scroll(0,0)" class="toplink">▲</a><h2 id="name-table-of-contents">
+<a href="#name-table-of-contents" class="section-name selfRef">Table of Contents</a>
+        </h2>
+<nav class="toc"><ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1">
+            <p id="section-toc.1-1.1.1"><a href="#section-1" class="xref">1</a>.  <a href="#name-introduction" class="xref">Introduction</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1.2.1">
+                <p id="section-toc.1-1.1.2.1.1" class="keepWithNext"><a href="#section-1.1" class="xref">1.1</a>.  <a href="#name-streamable-sads" class="xref">Streamable SADs</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1.2.2">
+                <p id="section-toc.1-1.1.2.2.1" class="keepWithNext"><a href="#section-1.2" class="xref">1.2</a>.  <a href="#name-nested-partial-signatures" class="xref">Nested Partial Signatures</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.1.2.3">
+                <p id="section-toc.1-1.1.2.3.1" class="keepWithNext"><a href="#section-1.3" class="xref">1.3</a>.  <a href="#name-transposable-signature-atta" class="xref">Transposable Signature Attachments</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2">
+            <p id="section-toc.1-1.2.1"><a href="#section-2" class="xref">2</a>.  <a href="#name-cesr-sad-path-language" class="xref">CESR SAD Path Language</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.1">
+                <p id="section-toc.1-1.2.2.1.1"><a href="#section-2.1" class="xref">2.1</a>.  <a href="#name-description-and-usage" class="xref">Description and Usage</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.2">
+                <p id="section-toc.1-1.2.2.2.1"><a href="#section-2.2" class="xref">2.2</a>.  <a href="#name-cesr-encoding-for-sad-path-" class="xref">CESR Encoding for SAD Path Language</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.3">
+                <p id="section-toc.1-1.2.2.3.1"><a href="#section-2.3" class="xref">2.3</a>.  <a href="#name-sad-path-examples" class="xref">SAD Path Examples</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.2.2.4">
+                <p id="section-toc.1-1.2.2.4.1"><a href="#section-2.4" class="xref">2.4</a>.  <a href="#name-alternative-pathing-query-l" class="xref">Alternative Pathing / Query Languages</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3">
+            <p id="section-toc.1-1.3.1"><a href="#section-3" class="xref">3</a>.  <a href="#name-cesr-attachments" class="xref">CESR Attachments</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.1">
+                <p id="section-toc.1-1.3.2.1.1"><a href="#section-3.1" class="xref">3.1</a>.  <a href="#name-cesr-signature-attachments" class="xref">CESR Signature Attachments</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.1.2.1">
+                    <p id="section-toc.1-1.3.2.1.2.1.1"><a href="#section-3.1.1" class="xref">3.1.1</a>.  <a href="#name-signing-sad-content" class="xref">Signing SAD Content</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.1.2.2">
+                    <p id="section-toc.1-1.3.2.1.2.2.1"><a href="#section-3.1.2" class="xref">3.1.2</a>.  <a href="#name-signatures-with-non-transfe" class="xref">Signatures with Non-Transferable Identifiers</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.1.2.3">
+                    <p id="section-toc.1-1.3.2.1.2.3.1"><a href="#section-3.1.3" class="xref">3.1.3</a>.  <a href="#name-signatures-with-transferabl" class="xref">Signatures with Transferable Identifiers</a></p>
+</li>
+                </ul>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.2">
+                <p id="section-toc.1-1.3.2.2.1"><a href="#section-3.2" class="xref">3.2</a>.  <a href="#name-additional-count-codes" class="xref">Additional Count Codes</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.2.2.1">
+                    <p id="section-toc.1-1.3.2.2.2.1.1"><a href="#section-3.2.1" class="xref">3.2.1</a>.  <a href="#name-sad-path-signature-group" class="xref">SAD Path Signature Group</a></p>
+</li>
+                  <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.2.2.2">
+                    <p id="section-toc.1-1.3.2.2.2.2.1"><a href="#section-3.2.2" class="xref">3.2.2</a>.  <a href="#name-sad-path-groups" class="xref">SAD Path Groups</a></p>
+</li>
+                </ul>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.3.2.3">
+                <p id="section-toc.1-1.3.2.3.1"><a href="#section-3.3" class="xref">3.3</a>.  <a href="#name-small-variable-raw-size-sad" class="xref">Small Variable Raw Size SAD Path Code</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4">
+            <p id="section-toc.1-1.4.1"><a href="#section-4" class="xref">4</a>.  <a href="#name-nested-partial-signatures-2" class="xref">Nested Partial Signatures</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.1">
+                <p id="section-toc.1-1.4.2.1.1"><a href="#section-4.1" class="xref">4.1</a>.  <a href="#name-signing-nested-sads" class="xref">Signing Nested SADs</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.4.2.2">
+                <p id="section-toc.1-1.4.2.2.1"><a href="#section-4.2" class="xref">4.2</a>.  <a href="#name-signing-saids" class="xref">Signing SAIDs</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.5">
+            <p id="section-toc.1-1.5.1"><a href="#section-5" class="xref">5</a>.  <a href="#name-conventions-and-definitions" class="xref">Conventions and Definitions</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.6">
+            <p id="section-toc.1-1.6.1"><a href="#section-6" class="xref">6</a>.  <a href="#name-security-considerations" class="xref">Security Considerations</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.7">
+            <p id="section-toc.1-1.7.1"><a href="#section-7" class="xref">7</a>.  <a href="#name-iana-considerations" class="xref">IANA Considerations</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8">
+            <p id="section-toc.1-1.8.1"><a href="#section-8" class="xref">8</a>.  <a href="#name-references" class="xref">References</a></p>
+<ul class="compact toc ulBare ulEmpty">
+<li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.1">
+                <p id="section-toc.1-1.8.2.1.1"><a href="#section-8.1" class="xref">8.1</a>.  <a href="#name-normative-references" class="xref">Normative References</a></p>
+</li>
+              <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.8.2.2">
+                <p id="section-toc.1-1.8.2.2.1"><a href="#section-8.2" class="xref">8.2</a>.  <a href="#name-informative-references" class="xref">Informative References</a></p>
+</li>
+            </ul>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.9">
+            <p id="section-toc.1-1.9.1"><a href="#appendix-A" class="xref"></a><a href="#name-acknowledgments" class="xref">Acknowledgments</a></p>
+</li>
+          <li class="compact toc ulBare ulEmpty" id="section-toc.1-1.10">
+            <p id="section-toc.1-1.10.1"><a href="#appendix-B" class="xref"></a><a href="#name-authors-address" class="xref">Author's Address</a></p>
+</li>
+        </ul>
+</nav>
+</section>
+</div>
+<div id="introduction">
+<section id="section-1">
+      <h2 id="name-introduction">
+<a href="#section-1" class="section-number selfRef">1. </a><a href="#name-introduction" class="section-name selfRef">Introduction</a>
+      </h2>
+<p id="section-1-1">Composable Event Streaming Representation (CESR) is a dual text-binary encoding format that has the unique property of text-binary concatenation composability. The CESR specification not only provides the definition of the streaming format but also the codes needed for creating and sharing all event types and signatures on all event types for the Key Event Receipt Infrastructure (KERI) <span>[<a href="#KERI" class="xref">KERI</a>]</span>. While all KERI event messages are self-addressing data (SAD), there is a broad class of SADs that are not KERI events but that require signature attachments. ACDC Verifiable credentials fit into this class of SADs. With more complex data structures represented as SADs, such as verifiable credentials, there is a need to provide signature attachments on nested subsets of SADs. Similar to indices in indexed controller signatures in KERI that specify the location of the public key they represent, nested SAD signatures need a path mechanism to specify the exact location of the nested content that they are signing. CESR Proof Signatures provide this mechanism with the CESR SAD Path Language and new attachment codes, detailed in this specification.<a href="#section-1-1" class="pilcrow">¶</a></p>
+<div id="streamable-sads">
+<section id="section-1.1">
+        <h3 id="name-streamable-sads">
+<a href="#section-1.1" class="section-number selfRef">1.1. </a><a href="#name-streamable-sads" class="section-name selfRef">Streamable SADs</a>
+        </h3>
+<p id="section-1.1-1">A primary goal of CESR Proof Signatures is to allow any signed self-addressing data (SAD) to be streamed inline with any other CESR content.  In support of that goal, CESR Proof Signatures leverage CESR attachments to define a signature scheme that can be attached to any SAD content serialized as JSON, MessagePack or CBOR.  Using this capability, SADs signed with CESR Proof Signatures can be streamed inline in either the text or binary domain alongside any other KERI event message over, for example TCP or UDP.  In addition, signed SADs can be transported via HTTP as a CESR HTTP Request (todo: reference needed).<a href="#section-1.1-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="nested-partial-signatures">
+<section id="section-1.2">
+        <h3 id="name-nested-partial-signatures">
+<a href="#section-1.2" class="section-number selfRef">1.2. </a><a href="#name-nested-partial-signatures" class="section-name selfRef">Nested Partial Signatures</a>
+        </h3>
+<p id="section-1.2-1">CESR Proof Signatures can be used to sign as many portions of a SAD (including the entire SAD) whether the signed subsets are SADs or the self-addressing identifer (SAID) of a SAD.  A new CESR count code is included with this specification to allow for multiple signatures on nested portions of a SAD to be grouped together under one attachment.  By including a SAD Path in the new CESR attachment for grouping signatures, the entire group of signatures can be transposed across envelope boundaries by changing only the root path of the group attachment code.<a href="#section-1.2-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="transposable-signature-attachments">
+<section id="section-1.3">
+        <h3 id="name-transposable-signature-atta">
+<a href="#section-1.3" class="section-number selfRef">1.3. </a><a href="#name-transposable-signature-atta" class="section-name selfRef">Transposable Signature Attachments</a>
+        </h3>
+<p id="section-1.3-1">There are several events in KERI that can contain context specific embedded self-addressing data (SADs). Exchange events (<code>exn</code>) for peer-to-peer communication and Replay events (<code>rpy</code>) for responding to data requests as well as Expose events (<code>exp</code>) for providing anchored data are all examples of KERI events that contain embedded SADs as part of their payload. If the SAD payload for one of these event types is signed with a CESR attachment, the resulting structure is not embeddable in one of the mapping serializations (JSON, CBOR, MessagePack) supported by CESR. To solve this problem, CESR Proof Signatures are transposable across envelope boundaries in that a single SAD signature or an entire signature group on any given SAD can be transposed to attach to the end of an enveloping SAD without losing its meaning. This unique feature is provided by the SAD Path language used in either a SAD signature or the root path designation in the outermost attachment code of any SAD signature group.  These paths can be updated to point to the embedded location of the signed SAD inside the envelope. Protocols for verifiable credential issuance and proof presentation can be defined using this capability to embed the same verifiable credential SAD at and location in an enveloping <code>exn</code> message as appropriate for the protocol without having to define a unique signature scheme for each protocol.<a href="#section-1.3-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="cesr-sad-path-language">
+<section id="section-2">
+      <h2 id="name-cesr-sad-path-language">
+<a href="#section-2" class="section-number selfRef">2. </a><a href="#name-cesr-sad-path-language" class="section-name selfRef">CESR SAD Path Language</a>
+      </h2>
+<p id="section-2-1">CESR Proof Signatures defines a SAD Path Language to be used in signature attachments for specifying the location of the SAD content within the signed SAD that a signature attachment is verifying. This path language has a more limited scope than alternatives like JSONPtr <span>[<a href="#RFC6901" class="xref">RFC6901</a>]</span> or JSONPath <span>[<a href="#JSONPath" class="xref">JSONPath</a>]</span> and is therefore simpler and more compact when encoding in CESR signature attachments. SADs in CESR and therefore CESR Proof Signatures require static field ordering of all maps. The SAD path language takes advantage of this feature to allow for a base64 compatible syntax into SADs even when a SAD uses non-base64 compatible characters for field labels.<a href="#section-2-1" class="pilcrow">¶</a></p>
+<div id="description-and-usage">
+<section id="section-2.1">
+        <h3 id="name-description-and-usage">
+<a href="#section-2.1" class="section-number selfRef">2.1. </a><a href="#name-description-and-usage" class="section-name selfRef">Description and Usage</a>
+        </h3>
+<p id="section-2.1-1">The SAD path language contains a single reserved character, the <code>-</code> (dash) character. Similar to the <code>/</code> (forward slack) character in URLs, the <code>-</code> in the SAD Path Language is the path separator between components of the path. The <code>-</code> was selected because it is a one of the valid base64 characters.<a href="#section-2.1-1" class="pilcrow">¶</a></p>
+<p id="section-2.1-2">The simplest path in the SAD Path Language is a single <code>-</code> character representing the root path which specifies the top level of the SAD content.<a href="#section-2.1-2" class="pilcrow">¶</a></p>
+<p id="section-2.1-3">Root Path
+~~~
+ -
+~~~<a href="#section-2.1-3" class="pilcrow">¶</a></p>
+<p id="section-2.1-4">After the root path, path components follow, delimited by the <code>-</code> character. Path components may be integer indices into field labels or arrays or may be full field labels. No wildcards are supported by the SAD Path Language<a href="#section-2.1-4" class="pilcrow">¶</a></p>
+<p id="section-2.1-5">An example SAD Path using only labels that resolve to map contexts follows:<a href="#section-2.1-5" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-2.1-6">
+<pre>
+-a-personal
+</pre><a href="#section-2.1-6" class="pilcrow">¶</a>
+</div>
+<p id="section-2.1-7">In addition, integers can be specified and their meaning is dependent on the context of the SAD.<a href="#section-2.1-7" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-2.1-8">
+<pre>
+-1-12-personal-0
+</pre><a href="#section-2.1-8" class="pilcrow">¶</a>
+</div>
+<p id="section-2.1-9">The rules for a SAD Path Language processor are simple. If a path consists of only a single <code>-</code>, it represents the root of the SAD and therefore the entire SAD content. Following any <code>-</code> character is a path component that points to a field if the current context is a map in the SAD or is an index of an element if the current context is an array. It is an error for any sub-path to resolve to a value this is not a map or an array.  Any trailing <code>-</code> character in a SAD Path can be ignored.<a href="#section-2.1-9" class="pilcrow">¶</a></p>
+<p id="section-2.1-10">The root context (after the initial <code>-</code>) is always a map. Therefore, the first path component represents a field of that map. The SAD is traversed following the path components as field labels or indexes in arrays until the end of the path is reached. The value at the end of the path is then returned as the resolution of the SAD Path. If the current context is a map and the path component is an integer, the path component represents an index into fields of the map. This feature takes advantage of the static field ordering of SADs and is used against any SAD that contains field labels that use non-base64 compatible characters or the <code>-</code> character. Any combination of integer and field label path components can be used when the current context is a map. All path components <span class="bcp14">MUST</span> be an integer when the current context is an array.<a href="#section-2.1-10" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="cesr-encoding-for-sad-path-language">
+<section id="section-2.2">
+        <h3 id="name-cesr-encoding-for-sad-path-">
+<a href="#section-2.2" class="section-number selfRef">2.2. </a><a href="#name-cesr-encoding-for-sad-path-" class="section-name selfRef">CESR Encoding for SAD Path Language</a>
+        </h3>
+<p id="section-2.2-1">SAD Paths are variable raw size primitives that require CESR variable size codes.  We will use the <code>A</code> small variable size code for SAD Paths which has 3 code entries being added to the Master Code Table, <code>4A##</code>, <code>5A##</code> and <code>6A##</code> for SAD Paths with 0 lead bytes, 1 lead byte and 2 lead bytes respecively.  This small variable side code is reserved for text values that only contain valid Base64 characters.  These codes are detailed in Table 2 below.  The selector not only encodes the table but also implicitly encodes the number of lead bytes. The variable size is measured in quadlets of 4 characters each in the T domain and equivalently in triplets of 3 bytes each in the B domain. Thus computing the number of characters when parsing or off-loading in the T domain means multiplying the variable size by 4. Computing the number of bytes when parsing or off-loading in the B domain means multiplying the variable size by 3. The two Base64 size characters provide value lengths in quadlets/triplets from 0 to 4095 (64**2 -1). This corresponds to path lengths of up to 16,380 characters (4095 * 4) or 12,285 bytes (4095 * 3).<a href="#section-2.2-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="sad-path-examples">
+<section id="section-2.3">
+        <h3 id="name-sad-path-examples">
+<a href="#section-2.3" class="section-number selfRef">2.3. </a><a href="#name-sad-path-examples" class="section-name selfRef">SAD Path Examples</a>
+        </h3>
+<p id="section-2.3-1">This section provides some more examples for SAD Path expressions. The examples are based on Authentic Chained Data
+Containers (ACDCs) representing verifiable credentials.<a href="#section-2.3-1" class="pilcrow">¶</a></p>
+<div id="section-2.3-2">
+<pre class="lang-json sourcecode">
+{
+  "v": "ACDC10JSON00011c_",
+  "d": "EBdXt3gIXOf2BBWNHdSXCJnFJL5OuQPyM5K0neuniccM",
+  "i": "EmkPreYpZfFk66jpf3uFv7vklXKhzBrAqjsKAn2EDIPM",
+  "s": "E46jrVPTzlSkUPqGGeIZ8a8FWS7a6s4reAXRZOkogZ2A",
+  "a": {
+    "d": "EgveY4-9XgOcLxUderzwLIr9Bf7V_NHwY1lkFrn9y2PY",
+    "i": "EQzFVaMasUf4cZZBKA0pUbRc9T8yUXRFLyM1JDASYqAA",
+    "dt": "2021-06-09T17:35:54.169967+00:00",
+    "ri": "EymRy7xMwsxUelUauaXtMxTfPAMPAI6FkekwlOjkggt",
+    "LEI": "254900OPPU84GM83MG36",
+    "personal": {
+      "legalName": "John Doe",
+      "home-city": "Durham"
+    }
+  },
+  "p": [
+    {
+      "qualifiedIssuerCredential": {
+        "d": "EIl3MORH3dCdoFOLe71iheqcywJcnjtJtQIYPvAu6DZA",
+        "i": "Et2DOOu4ivLsjpv89vgv6auPntSLx4CvOhGUxMhxPS24"
+      }
+    },
+    {
+      "certifiedLender": {
+        "d": "EglG9JLG6UhkLrrv012NPuLEc1F3ne5vPH_sHGP_QPN0",
+        "i": "E8YrUcVIqrMtDJHMHDde7LHsrBOpvN38PLKe_JCDzVrA"
+      }
+    }
+  ]
+}
+</pre><a href="#section-2.3-2" class="pilcrow">¶</a>
+</div>
+<p id="section-2.3-3">Figure 1. Example ACDC Credential SAD<a href="#section-2.3-3" class="pilcrow">¶</a></p>
+<p id="section-2.3-4">The examples in Table 1 represent all the features of the SAD Path language when referring to the SAD in Figure 1. along with the CESR text encodeing.<a href="#section-2.3-4" class="pilcrow">¶</a></p>
+<table class="center" id="table-1">
+          <caption><a href="#table-1" class="selfRef">Table 1</a></caption>
+<thead>
+            <tr>
+              <th class="text-left" rowspan="1" colspan="1">SAD Path</th>
+              <th class="text-left" rowspan="1" colspan="1">Result</th>
+              <th class="text-left" rowspan="1" colspan="1">CESR T Domain Encoding</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">-</td>
+              <td class="text-left" rowspan="1" colspan="1">The root of the SAD</td>
+              <td class="text-left" rowspan="1" colspan="1">6AABAAA-</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">-a-personal</td>
+              <td class="text-left" rowspan="1" colspan="1">The personal map of the a field</td>
+              <td class="text-left" rowspan="1" colspan="1">4AADA-a-personal</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">-4-5</td>
+              <td class="text-left" rowspan="1" colspan="1">The personal map of the a field</td>
+              <td class="text-left" rowspan="1" colspan="1">4AAB-4-5</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">-4-5-legalName</td>
+              <td class="text-left" rowspan="1" colspan="1">"John Doe"</td>
+              <td class="text-left" rowspan="1" colspan="1">5AAEAA-4-5-legalName</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">-a-personal-1</td>
+              <td class="text-left" rowspan="1" colspan="1">"Durham"</td>
+              <td class="text-left" rowspan="1" colspan="1">6AAEAAA-a-personal-1</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">-p-1</td>
+              <td class="text-left" rowspan="1" colspan="1">The second element in the p array</td>
+              <td class="text-left" rowspan="1" colspan="1">4AAB-p-1</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">-a-LEI</td>
+              <td class="text-left" rowspan="1" colspan="1">"254900OPPU84GM83MG36"</td>
+              <td class="text-left" rowspan="1" colspan="1">5AACAA-a-LEI</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">-p-0-0-d</td>
+              <td class="text-left" rowspan="1" colspan="1">"EIl3MORH...6DZA"</td>
+              <td class="text-left" rowspan="1" colspan="1">4AAC-p-0-0-d</td>
+            </tr>
+            <tr>
+              <td class="text-left" rowspan="1" colspan="1">-p-0-certifiedLender-i</td>
+              <td class="text-left" rowspan="1" colspan="1">"E8YrUcVI...zVrA"</td>
+              <td class="text-left" rowspan="1" colspan="1">5AAGAA-p-0-certifiedLender-i</td>
+            </tr>
+          </tbody>
+        </table>
+</section>
+</div>
+<div id="alternative-pathing-query-languages">
+<section id="section-2.4">
+        <h3 id="name-alternative-pathing-query-l">
+<a href="#section-2.4" class="section-number selfRef">2.4. </a><a href="#name-alternative-pathing-query-l" class="section-name selfRef">Alternative Pathing / Query Languages</a>
+        </h3>
+<p id="section-2.4-1">The SAD Path language was chosen over alternatives such as JSONPtr and JSONPath in order to create a more compact representation of a pathing language in the text domain.  Many of the features of the alternatives are not needed for CESR Proof Signatures.  The only token in the language (<code>-</code>) is base64 compatible.  The use of field indices in SADs (which require staticly ordered fields) allows for base64 compatible pathing even when the field labels of the target SAD are not base64 compatible.  The language accomplishes the goal of uniquely locating any path in a SAD using minimally sufficient means in a manner that allows it to be embedded in a CESR attachment as base64.  Alternative syntaxes would need to be base64 encoded to be used in a CESR attachment in the text domain thus incurring the additional bandwidth cost of such an encoding.<a href="#section-2.4-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="cesr-attachments">
+<section id="section-3">
+      <h2 id="name-cesr-attachments">
+<a href="#section-3" class="section-number selfRef">3. </a><a href="#name-cesr-attachments" class="section-name selfRef">CESR Attachments</a>
+      </h2>
+<p id="section-3-1">This specification adds 2 <em>Counter Four Character Codes</em> to the Master Code Table and 1 <em>Small Variable Raw Size Code Type</em> to the Master Code Table (which results in 3 new code entries).  The additions to the Master Code Table of CESR is shown below:<a href="#section-3-1" class="pilcrow">¶</a></p>
+<table class="center" id="table-2">
+        <caption><a href="#table-2" class="selfRef">Table 2</a></caption>
+<thead>
+          <tr>
+            <th class="text-center" rowspan="1" colspan="1">Code</th>
+            <th class="text-left" rowspan="1" colspan="1">Description</th>
+            <th class="text-center" rowspan="1" colspan="1">Code Length</th>
+            <th class="text-center" rowspan="1" colspan="1">Count or Index Length</th>
+            <th class="text-center" rowspan="1" colspan="1">Total Length</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td class="text-center" rowspan="1" colspan="1"> </td>
+            <td class="text-left" rowspan="1" colspan="1">
+              <strong>Counter Four Character Codes</strong>
+</td>
+            <td class="text-center" rowspan="1" colspan="1"> </td>
+            <td class="text-center" rowspan="1" colspan="1"> </td>
+            <td class="text-center" rowspan="1" colspan="1"> </td>
+          </tr>
+          <tr>
+            <td class="text-center" rowspan="1" colspan="1">-J##</td>
+            <td class="text-left" rowspan="1" colspan="1">Count of attached qualified Base64 SAD path sig groups path+sig group (trans or non-trans)</td>
+            <td class="text-center" rowspan="1" colspan="1">4</td>
+            <td class="text-center" rowspan="1" colspan="1">2</td>
+            <td class="text-center" rowspan="1" colspan="1">4</td>
+          </tr>
+          <tr>
+            <td class="text-center" rowspan="1" colspan="1">-K##</td>
+            <td class="text-left" rowspan="1" colspan="1">Count of attached qualified Base64 SAD Path groups</td>
+            <td class="text-center" rowspan="1" colspan="1">4</td>
+            <td class="text-center" rowspan="1" colspan="1">2</td>
+            <td class="text-center" rowspan="1" colspan="1">4</td>
+          </tr>
+          <tr>
+            <td class="text-center" rowspan="1" colspan="1"> </td>
+            <td class="text-left" rowspan="1" colspan="1">
+              <strong>Small Variable Raw Size Code</strong>
+</td>
+            <td class="text-center" rowspan="1" colspan="1"> </td>
+            <td class="text-center" rowspan="1" colspan="1"> </td>
+            <td class="text-center" rowspan="1" colspan="1"> </td>
+          </tr>
+          <tr>
+            <td class="text-center" rowspan="1" colspan="1">4A##</td>
+            <td class="text-left" rowspan="1" colspan="1">String Base64 Only with 0 Lead Bytes</td>
+            <td class="text-center" rowspan="1" colspan="1">4</td>
+            <td class="text-center" rowspan="1" colspan="1">2</td>
+            <td class="text-center" rowspan="1" colspan="1">4</td>
+          </tr>
+          <tr>
+            <td class="text-center" rowspan="1" colspan="1">5A##</td>
+            <td class="text-left" rowspan="1" colspan="1">String Base64 Only with 1 Lead Byte</td>
+            <td class="text-center" rowspan="1" colspan="1">4</td>
+            <td class="text-center" rowspan="1" colspan="1">2</td>
+            <td class="text-center" rowspan="1" colspan="1">4</td>
+          </tr>
+          <tr>
+            <td class="text-center" rowspan="1" colspan="1">6A##</td>
+            <td class="text-left" rowspan="1" colspan="1">String Base64 Only with 2 Lead Bytes</td>
+            <td class="text-center" rowspan="1" colspan="1">4</td>
+            <td class="text-center" rowspan="1" colspan="1">2</td>
+            <td class="text-center" rowspan="1" colspan="1">4</td>
+          </tr>
+        </tbody>
+      </table>
+<div id="cesr-signature-attachments">
+<section id="section-3.1">
+        <h3 id="name-cesr-signature-attachments">
+<a href="#section-3.1" class="section-number selfRef">3.1. </a><a href="#name-cesr-signature-attachments" class="section-name selfRef">CESR Signature Attachments</a>
+        </h3>
+<p id="section-3.1-1">CESR defines several counter codes for attaching signatures to serialized CESR event messages.  For KERI event messages, the signatures in the attachments apply to the entire serialized content of the KERI event message.  As all KERI event messages are SADs, the same rules for signing a KERI event message applies to signing SADs for CESR Proof Signatures.  A brief review of CESR signatures for transferable and non-transferable identifiers follows.  In addition, signatures on nested content must be specified.<a href="#section-3.1-1" class="pilcrow">¶</a></p>
+<div id="signing-sad-content">
+<section id="section-3.1.1">
+          <h4 id="name-signing-sad-content">
+<a href="#section-3.1.1" class="section-number selfRef">3.1.1. </a><a href="#name-signing-sad-content" class="section-name selfRef">Signing SAD Content</a>
+          </h4>
+<p id="section-3.1.1-1">Signatures on SAD content require signing the serialized encoding format of the data ensuring that the signature applies to the data over the wire.  The serialization for any SAD is identified in the version string which can be found in the <code>v</code> field of any KERI event message or ACDC credential.   An example version string follows:<a href="#section-3.1.1-1" class="pilcrow">¶</a></p>
+<div id="section-3.1.1-2">
+<pre class="lang-json sourcecode">
+ {
+     "v": "KERI10JSON00011c_"
+ }
+</pre><a href="#section-3.1.1-2" class="pilcrow">¶</a>
+</div>
+<p id="section-3.1.1-3">where KERI is the identifier of KERI events followed by the hexidecimal major and minor version code and then the serialized encoding format of the event, JSON in this case.  KERI and ACDC support JSON, MessagePack and CBOR currently.  Field ordering is important when apply cryptographic signatures and all serialized encoding formats must support static field ordering.  Serializing a SAD starts with reading the version string from the SAD field (<code>v</code> for KERI and ACDC events message) to determine the serialized encoding format of the message.  The serialized encoding format is used to generate the SAID at creation and can not be changed.  The event map is serialized using a library that ensures the static field order perserved across serialization and deserialization and the private keys are used to generate the qualified cryptographic material that represents the signatures over the SAD content.<a href="#section-3.1.1-3" class="pilcrow">¶</a></p>
+<p id="section-3.1.1-4">The same serialized encoding format must be used when nesting a SAD in another SAD.  For example, an ACDC credential that was issued using JSON can only be embedded and presented in a KERI <code>exn</code> presentation event message that uses JSON as its serialized encoding format.  That same credential can not be transmitted using CBOR or MessagePack.  Controllers can rely on this restriction when verifying signatures of embedded SADs.  When processing the signature attachments and resolving the data at a given SAD path, the serialization of the outter most SAD can be used at any depth of the traversal.  New verison string processing does not need to occur at nested paths.  However, if credential signature verification is pipelined and process in parallel processes from event message processing, the version string of the nested SAD will still be valid and can be used if needed.<a href="#section-3.1.1-4" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="signatures-with-non-transferable-identifiers">
+<section id="section-3.1.2">
+          <h4 id="name-signatures-with-non-transfe">
+<a href="#section-3.1.2" class="section-number selfRef">3.1.2. </a><a href="#name-signatures-with-non-transfe" class="section-name selfRef">Signatures with Non-Transferable Identifiers</a>
+          </h4>
+<p id="section-3.1.2-1">Non-transferable identifiers only ever have one public key.  In addition, the identifier prefix is identical to the qualified cryptographic material of the public key and therefore no KEL is required to validate the signature of a non-transferable identifier.  The attachment code for witness receipt couplets, used for CESR Proof Signatures,  takes this into account.  The four character couner code <code>-C##</code> is used for non-transferable identifiers and contains the signing identfier prefix and the signature.  Since the verification key can be extracted from the identifier prefix and the identifier can not be rotated, all that is required to validate the signature is the identifier prefix, the data signed and the signature.<a href="#section-3.1.2-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="signatures-with-transferable-identifiers">
+<section id="section-3.1.3">
+          <h4 id="name-signatures-with-transferabl">
+<a href="#section-3.1.3" class="section-number selfRef">3.1.3. </a><a href="#name-signatures-with-transferabl" class="section-name selfRef">Signatures with Transferable Identifiers</a>
+          </h4>
+<p id="section-3.1.3-1">Transferable identifiers require full KEL resolution and verfication to determine the correct public key used to sign some content.  In addition, the attachment code used for transferable identifiers, <code>-F##</code> must specify the location in the KEL at which point the signature was generated.  To accomplish this, this counter code includes the identifier prefix, the sequence number of the event in the KEL, the digest of the event in the KEL and the indexed signatures (transferable identifiers support multiple public/private keys and require index signatures).  Using all the values, one can verify the signature(s) by retrieving the KEL of the identifier prefix and determine the key state at the sequence number along with validating the digest of the event against the actual event.  Then using the key(s) at the determined key state, validate the signature(s).<a href="#section-3.1.3-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="additional-count-codes">
+<section id="section-3.2">
+        <h3 id="name-additional-count-codes">
+<a href="#section-3.2" class="section-number selfRef">3.2. </a><a href="#name-additional-count-codes" class="section-name selfRef">Additional Count Codes</a>
+        </h3>
+<p id="section-3.2-1">This specification adds two Counter Four Character Codes to the CESR Master Code Table for attaching and grouping transposable signatures on SAD and nested SAD content.  The first code (<code>-J##</code>) is reserved for attaching a SAD path and the associated signatures on the content at the resolution of the SAD Path (either a SAD or its associated SAID).  The second reserved code (<code>-K##</code>) is for grouping all SAD Path signature groups under a root path for a given SAD.  The root path in the second grouping code provides signature attachment transposability for embedding SAD content in other messages.<a href="#section-3.2-1" class="pilcrow">¶</a></p>
+<div id="sad-path-signature-group">
+<section id="section-3.2.1">
+          <h4 id="name-sad-path-signature-group">
+<a href="#section-3.2.1" class="section-number selfRef">3.2.1. </a><a href="#name-sad-path-signature-group" class="section-name selfRef">SAD Path Signature Group</a>
+          </h4>
+<p id="section-3.2.1-1">The SAD Path Signature Group provides a four character counter code, <code>-J##</code>, for attaching an encoded variable length SAD Path along with either a transferable index signature group or non-transferable identifer receipt couplets.  The SAD Path identifies the content that this attachment is signing.  The path must resolve to either a nested SAD (map) or a SAID (string) of an externally provided SAD within the context of the SAD and root path against which this attachment is applied.  Using the following ACDC SAD embedded in a KERI <code>exn</code> message:<a href="#section-3.2.1-1" class="pilcrow">¶</a></p>
+<div id="section-3.2.1-2">
+<pre class="lang-json sourcecode">
+{
+  "v": "KERI10JSON00011c_",
+  "t": "exn",
+  "dt": "2020-08-22T17:50:12.988921+00:00",
+  "r": "/credential/offer",
+  "a": {
+    "credential": { // SIGNATURE TARGET OF TRANSPOSED SAD PATH GROUP
+      "v": "ACDC10JSON00011c_",
+      "d": "EBdXt3gIXOf2BBWNHdSXCJnFJL5OuQPyM5K0neuniccM",
+      "i": "EmkPreYpZfFk66jpf3uFv7vklXKhzBrAqjsKAn2EDIPM",
+      "s": "E46jrVPTzlSkUPqGGeIZ8a8FWS7a6s4reAXRZOkogZ2A",
+      "a": {
+        "d": "EgveY4-9XgOcLxUderzwLIr9Bf7V_NHwY1lkFrn9y2PY",
+        "i": "EQzFVaMasUf4cZZBKA0pUbRc9T8yUXRFLyM1JDASYqAA",
+        "dt": "2021-06-09T17:35:54.169967+00:00",
+        "ri": "EymRy7xMwsxUelUauaXtMxTfPAMPAI6FkekwlOjkggt",
+        "LEI": "254900OPPU84GM83MG36",
+        "personal": {
+          "legalName": "John Doe",
+          "home": "Durham"
+        }
+      }
+    }
+  }
+}
+</pre><a href="#section-3.2.1-2" class="pilcrow">¶</a>
+</div>
+<p id="section-3.2.1-3">the following signature applies to the nested <code>credential</code> SAD signed by a transferable identifier using the transferable index signature group. The example is annotated with comments, spaces and line feeds for clarity.<a href="#section-3.2.1-3" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-3.2.1-4">
+<pre>
+-JAB              # SAD path signature group counter code 1 following the group
+6AAEAAA-a-credential  # encoded SAD path designation
+-FAB     # Trans Indexed Sig Groups counter code 1 following group
+E_T2_p83_gRSuAYvGhqV3S0JzYEF2dIa-OCPLbIhBO7Y    # trans prefix of signer for sigs
+-EAB0AAAAAAAAAAAAAAAAAAAAAAB    # sequence number of est event of signer's public keys for sigs
+EwmQtlcszNoEIDfqD-Zih3N6o5B3humRKvBBln2juTEM      # digest of est event of signer's public keys for sigs
+-AAD     # Controller Indexed Sigs counter code 3 following sigs
+AA5267UlFg1jHee4Dauht77SzGl8WUC_0oimYG5If3SdIOSzWM8Qs9SFajAilQcozXJVnbkY5stG_K4NbKdNB4AQ         # sig 0
+ABBgeqntZW3Gu4HL0h3odYz6LaZ_SMfmITL-Btoq_7OZFe3L16jmOe49Ur108wH7mnBaq2E_0U0N0c5vgrJtDpAQ    # sig 1
+ACTD7NDX93ZGTkZBBuSeSGsAQ7u0hngpNTZTK_Um7rUZGnLRNJvo5oOnnC1J2iBQHuxoq8PyjdT3BHS2LiPrs2Cg  # sig 2
+</pre><a href="#section-3.2.1-4" class="pilcrow">¶</a>
+</div>
+<p id="section-3.2.1-5">The next example demostrates the use of a non-transferable identifier to sign SAD content.  In this example, the entire nested SAD located at the <code>a</code> field is signed by the non-transferable identfier:<a href="#section-3.2.1-5" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-3.2.1-6">
+<pre>
+-JAB       # SAD path signature group counter code 1 following the group
+5AABAA-a    # encoded SAD path designation
+-CAB       # NonTrans witness receipt couplet
+BmMfUwIOywRkyc5GyQXfgDA4UOAMvjvnXcaK9G939ArM  # non-trans prefix of signer of sig
+0BT7b5PzUBmts-lblgOBzdThIQjKCbq8gMinhymgr4_dD0JyfN6CjZhsOqqUYFmRhABQ-vPywggLATxBDnqQ3aBg  # sig
+</pre><a href="#section-3.2.1-6" class="pilcrow">¶</a>
+</div>
+</section>
+</div>
+<div id="sad-path-groups">
+<section id="section-3.2.2">
+          <h4 id="name-sad-path-groups">
+<a href="#section-3.2.2" class="section-number selfRef">3.2.2. </a><a href="#name-sad-path-groups" class="section-name selfRef">SAD Path Groups</a>
+          </h4>
+<p id="section-3.2.2-1">The SAD Path Group provides a four character counter code, <code>-K##</code>, for attaching encoded variable length <strong>root</strong> SAD Path along with 1 or more SAD Path Signature Groups.  The root SAD Path identifies the root context against which the paths in all included SAD Path Signature Groups are resolved.  When parsing a SAD Path Group, if the root path is the single <code>-</code> character, all SAD paths are treated as absolute paths.  Otherwise, the root path is prepended to the SAD paths in each of the SAD Path Signature Groups.  Given the following snippet of a SAD Path Group:<a href="#section-3.2.2-1" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-3.2.2-2">
+<pre>
+-KAB6AABAAA--JAB5AABAA-a...
+</pre><a href="#section-3.2.2-2" class="pilcrow">¶</a>
+</div>
+<p id="section-3.2.2-3">The root path is the single <code>-</code> character meaning that all subsequent SAD Paths are absolute and therefore the first path is resolved as the <code>a</code> field of the root map of the SAD as seen in the following example:<a href="#section-3.2.2-3" class="pilcrow">¶</a></p>
+<div id="section-3.2.2-4">
+<pre class="lang-json sourcecode">
+{
+  "v": "ACDC10JSON00011c_",
+  "d": "EBdXt3gIXOf2BBWNHdSXCJnFJL5OuQPyM5K0neuniccM",
+  "i": "EmkPreYpZfFk66jpf3uFv7vklXKhzBrAqjsKAn2EDIPM",
+  "s": "E46jrVPTzlSkUPqGGeIZ8a8FWS7a6s4reAXRZOkogZ2A",
+  "a": {  // SIGNATURE TARGET OF SAD PATH GROUP
+    "d": "EgveY4-9XgOcLxUderzwLIr9Bf7V_NHwY1lkFrn9y2PY",
+    "i": "EQzFVaMasUf4cZZBKA0pUbRc9T8yUXRFLyM1JDASYqAA",
+    "dt": "2021-06-09T17:35:54.169967+00:00",
+    "ri": "EymRy7xMwsxUelUauaXtMxTfPAMPAI6FkekwlOjkggt",
+    "LEI": "254900OPPU84GM83MG36",
+    "personal": {
+      "legalName": "John Doe",
+      "city": "Durham"
+    }
+  }
+}
+</pre><a href="#section-3.2.2-4" class="pilcrow">¶</a>
+</div>
+<div id="transposable-signature-attachments-1">
+<section id="section-3.2.2.1">
+            <h5 id="name-transposable-signature-attac">
+<a href="#section-3.2.2.1" class="section-number selfRef">3.2.2.1. </a><a href="#name-transposable-signature-attac" class="section-name selfRef">Transposable Signature Attachments</a>
+            </h5>
+<p id="section-3.2.2.1-1">To support nesting of signed SAD content in other SAD content the root path of SAD Path Groups or the path of a SAD Path Signature Group provides transposability of CESR SAD signatures such that a single SAD Path Signature Group or an entire SAD Path Group attachment can be transposed across envelope boundaries by updating the single path or root path to indicate the new location.  Extending the example above, the SAD content is now embedded in a KERI <code>exn</code> event message as follows:<a href="#section-3.2.2.1-1" class="pilcrow">¶</a></p>
+<div id="section-3.2.2.1-2">
+<pre class="lang-json sourcecode">
+{
+  "v": "KERI10JSON00011c_",
+  "t": "exn",
+  "dt": "2020-08-22T17:50:12.988921+00:00"
+  "r": "/credential/offer"
+  "a": {
+    "v": "ACDC10JSON00011c_",
+    "d": "EBdXt3gIXOf2BBWNHdSXCJnFJL5OuQPyM5K0neuniccM",
+    "i": "EmkPreYpZfFk66jpf3uFv7vklXKhzBrAqjsKAn2EDIPM",
+    "s": "E46jrVPTzlSkUPqGGeIZ8a8FWS7a6s4reAXRZOkogZ2A",
+    "a": { // SIGNATURE TARGET OF TRANSPOSED SAD PATH GROUP
+      "d": "EgveY4-9XgOcLxUderzwLIr9Bf7V_NHwY1lkFrn9y2PY",
+      "i": "EQzFVaMasUf4cZZBKA0pUbRc9T8yUXRFLyM1JDASYqAA",
+      "dt": "2021-06-09T17:35:54.169967+00:00",
+      "ri": "EymRy7xMwsxUelUauaXtMxTfPAMPAI6FkekwlOjkggt",
+      "LEI": "254900OPPU84GM83MG36",
+      "personal": {
+        "legalName": "John Doe",
+        "city": "Durham"
+      }
+    }
+  }
+}
+</pre><a href="#section-3.2.2.1-2" class="pilcrow">¶</a>
+</div>
+<p id="section-3.2.2.1-3">The same signature gets transposed to the outer <code>exn</code> SAD by updating the root path of the <code>-K##</code> attachment:<a href="#section-3.2.2.1-3" class="pilcrow">¶</a></p>
+<div class="alignLeft art-text artwork" id="section-3.2.2.1-4">
+<pre>
+-KAB5AABAA-a-JAB5AABAA-a...
+</pre><a href="#section-3.2.2.1-4" class="pilcrow">¶</a>
+</div>
+<p id="section-3.2.2.1-5">Now the SAD Path of the first signed SAD content resolves to the <code>a</code> field of the <code>a</code> field of the streamed <code>exn</code> message<a href="#section-3.2.2.1-5" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+</section>
+</div>
+<div id="small-variable-raw-size-sad-path-code">
+<section id="section-3.3">
+        <h3 id="name-small-variable-raw-size-sad">
+<a href="#section-3.3" class="section-number selfRef">3.3. </a><a href="#name-small-variable-raw-size-sad" class="section-name selfRef">Small Variable Raw Size SAD Path Code</a>
+        </h3>
+<p id="section-3.3-1">The small variable raw side code reserved for SAD Path encoding is <code>A</code> which results in the addition of 3 entries (<code>4A##</code>, <code>5A##</code> and <code>6A##</code>) in the Master Code Table for each lead byte configuration.  These codes and their use are discussed in detail in <a href="">CESR Encoding for SAD Path Language</a>.<a href="#section-3.3-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="nested-partial-signatures-1">
+<section id="section-4">
+      <h2 id="name-nested-partial-signatures-2">
+<a href="#section-4" class="section-number selfRef">4. </a><a href="#name-nested-partial-signatures-2" class="section-name selfRef">Nested Partial Signatures</a>
+      </h2>
+<p id="section-4-1">Additional signatures on nested content can be included in a SAD Path Group and are applied to the serialized data at the resolution of a SAD path in a SAD.  Signatures can be applied to the SAID or an entire nested SAD.   When verifying a CESR Proof Signature, the content at the resolution of the SAD path is the data that was signed.  The choice to sign a SAID or the full SAD effects how the data may be used in presentations and the rules for verifying the signature.<a href="#section-4-1" class="pilcrow">¶</a></p>
+<div id="signing-nested-sads">
+<section id="section-4.1">
+        <h3 id="name-signing-nested-sads">
+<a href="#section-4.1" class="section-number selfRef">4.1. </a><a href="#name-signing-nested-sads" class="section-name selfRef">Signing Nested SADs</a>
+        </h3>
+<p id="section-4.1-1">When signing nested SAD content, the serialization used at the time of signing is the only serialization that can be used when presenting the signed data.  When transposing the signatures and nesting the signed data, the enveloping SAD must use the same serialization that was used to create the signatures.  This is to ensure that all signatures apply to the data over the wire and not a transformation of that data.  The serialization can be determined from the version field (<code>v</code>) of the nested SAD or any parent of the nested SAD as they are guaranteed to be identical.  Consider the following ACDC Credential SAD:<a href="#section-4.1-1" class="pilcrow">¶</a></p>
+<div id="section-4.1-2">
+<pre class="lang-json sourcecode">
+{
+  "v": "ACDC10JSON00011c_",
+  "d": "EBdXt3gIXOf2BBWNHdSXCJnFJL5OuQPyM5K0neuniccM",
+  "i": "EmkPreYpZfFk66jpf3uFv7vklXKhzBrAqjsKAn2EDIPM",
+  "s": "E46jrVPTzlSkUPqGGeIZ8a8FWS7a6s4reAXRZOkogZ2A",
+  "a": {   // SIGNATURE TARGET OF SAD PATH GROUP
+    "d": "EgveY4-9XgOcLxUderzwLIr9Bf7V_NHwY1lkFrn9y2PY",
+    "i": "EQzFVaMasUf4cZZBKA0pUbRc9T8yUXRFLyM1JDASYqAA",
+    "dt": "2021-06-09T17:35:54.169967+00:00",
+    "ri": "EymRy7xMwsxUelUauaXtMxTfPAMPAI6FkekwlOjkggt",
+    "LEI": "254900OPPU84GM83MG36",
+    "personal": {
+      "d": "E2X8OLaLnM0XRQEYgM5UV3bZmWg3UUn7CP4SoKkvsl-s",
+        "first": "John",
+        "last": "Doe"
+    }
+  }
+}
+</pre><a href="#section-4.1-2" class="pilcrow">¶</a>
+</div>
+<p id="section-4.1-3">To sign the SAD located at the path <code>-a</code>, JSON serialization would be used because the SAD at that path does not have a version field so the version field of its parent is used.  The serialization rules (spacing, field ordering, etc) for a SAD would be used for the SAD and the serialization encoding format and the signature would be applied to the bytes of the JSON for that map.  Any presentation of the signed data must always include the fully nested SAD.  The only valid nesting of this credential would be as follows:<a href="#section-4.1-3" class="pilcrow">¶</a></p>
+<div id="section-4.1-4">
+<pre class="lang-json sourcecode">
+{
+  "v": "KERI10JSON00011c_",
+  "t": "exn",
+  "dt": "2020-08-22T17:50:12.988921+00:00"
+  "r": "/credential/apply"
+  "a": {
+    "v": "ACDC10JSON00011c_",
+    "d": "EBdXt3gIXOf2BBWNHdSXCJnFJL5OuQPyM5K0neuniccM",
+    "i": "EmkPreYpZfFk66jpf3uFv7vklXKhzBrAqjsKAn2EDIPM",
+    "s": "E46jrVPTzlSkUPqGGeIZ8a8FWS7a6s4reAXRZOkogZ2A",
+    "a": {   // FULL SAD MUST BE PRESENT
+      "d": "EgveY4-9XgOcLxUderzwLIr9Bf7V_NHwY1lkFrn9y2PY",
+      "i": "EQzFVaMasUf4cZZBKA0pUbRc9T8yUXRFLyM1JDASYqAA",
+      "dt": "2021-06-09T17:35:54.169967+00:00",
+      "ri": "EymRy7xMwsxUelUauaXtMxTfPAMPAI6FkekwlOjkggt",
+      "LEI": "254900OPPU84GM83MG36",
+      "legalName": {
+        "d": "E2X8OLaLnM0XRQEYgM5UV3bZmWg3UUn7CP4SoKkvsl-s",
+        "first": "John",
+        "last": "Doe"
+      }
+    }
+  }
+}
+</pre><a href="#section-4.1-4" class="pilcrow">¶</a>
+</div>
+</section>
+</div>
+<div id="signing-saids">
+<section id="section-4.2">
+        <h3 id="name-signing-saids">
+<a href="#section-4.2" class="section-number selfRef">4.2. </a><a href="#name-signing-saids" class="section-name selfRef">Signing SAIDs</a>
+        </h3>
+<p id="section-4.2-1">Applying signatures to a SAD with SAIDs in place of fully expanded nested SAD content enables compact credentials for domains with bandwidth restrictions such as IoT.  Consider the following fully expanded credential:<a href="#section-4.2-1" class="pilcrow">¶</a></p>
+<div id="section-4.2-2">
+<pre class="lang-json sourcecode">
+{
+    "v": "ACDC10JSON00011c_",
+    "d": "EBdXt3gIXOf2BBWNHdSXCJnFJL5OuQPyM5K0neuniccM",
+    "i": "EmkPreYpZfFk66jpf3uFv7vklXKhzBrAqjsKAn2EDIPM",
+    "s": "E46jrVPTzlSkUPqGGeIZ8a8FWS7a6s4reAXRZOkogZ2A",
+    "a": {
+      "d": "EgveY4-9XgOcLxUderzwLIr9Bf7V_NHwY1lkFrn9y2PY",
+      "i": "EQzFVaMasUf4cZZBKA0pUbRc9T8yUXRFLyM1JDASYqAA",
+      "dt": "2021-06-09T17:35:54.169967+00:00",
+      "ri": "EymRy7xMwsxUelUauaXtMxTfPAMPAI6FkekwlOjkggt",
+      "LEI": "254900OPPU84GM83MG36",
+      "legalName": {
+        "d": "E2X8OLaLnM0XRQEYgM5UV3bZmWg3UUn7CP4SoKkvsl-s",
+        "n": "sKHtYSiCdlibuLDS2PTJg1AZXtPhaySZ9O3DoKrRXWY",
+        "first": "John
+        "middle": "William"
+        "last": "Doe"
+      },
+      "address": {
+        "d": "E-0luqYSg6cPcMFmhiAz8VBQObZLmTQPrgsr7Z1j6CA4",
+        "n": "XiSoVDNvqV8ldofPyTVqQ-EtVPlkIIQTln9Ai0yI05M",
+        "street": "123 Main St",
+        "city": "Salt Lake City",
+        "state": "Utah",
+        "zipcode": "84157"
+      },
+      "phone": {
+        "d": "E6lty8H2sA_1acq8zg89_kqF194DbF1cDpwA7UPtwjPQ",
+        "n": "_XKNVntbcIjp12DmsAGhv-R7JRwuzjD6KCHC7Fw3zvU"
+        "mobile": "555-121-3434",
+        "home": "555-121-3435",
+        "work": "555-121-3436",
+        "fax": "555-121-3437"
+      }
+    }
+  }
+}
+</pre><a href="#section-4.2-2" class="pilcrow">¶</a>
+</div>
+<p id="section-4.2-3">The three nested blocks of the <code>a</code> block <code>legalName</code>, <code>address</code> and <code>phone</code> are SADs with a SAID in the <code>d</code> field and are candidates for SAID replacement in an issued credential.  A compact credential can be created and signed by replacing those three nested blocks with the SAID of each nested SAD.  The schema for this verifiable credential would need to specify conditional subschema for the field labels at each nesting location that requires the full schema of the nested SAD or a string for the SAID.  The commitment to a SAID in place of a SAD contains nearly the same cryptographic integrity as a commitment to the SAD itself since the SAID is the qualified cryptographic material of a digest of the SAD.  The same credential could be converted to a compact credential containing the SAIDs of each nested block and signed as follows:<a href="#section-4.2-3" class="pilcrow">¶</a></p>
+<div id="section-4.2-4">
+<pre class="lang-json sourcecode">
+{
+   "v": "ACDC10JSON00011c_",
+   "d": "EBdXt3gIXOf2BBWNHdSXCJnFJL5OuQPyM5K0neuniccM",
+   "i": "EmkPreYpZfFk66jpf3uFv7vklXKhzBrAqjsKAn2EDIPM",
+   "s": "E46jrVPTzlSkUPqGGeIZ8a8FWS7a6s4reAXRZOkogZ2A",
+   "a": {
+     "d": "EgveY4-9XgOcLxUderzwLIr9Bf7V_NHwY1lkFrn9y2PY",
+     "i": "EQzFVaMasUf4cZZBKA0pUbRc9T8yUXRFLyM1JDASYqAA",
+     "dt": "2021-06-09T17:35:54.169967+00:00",
+     "ri": "EymRy7xMwsxUelUauaXtMxTfPAMPAI6FkekwlOjkggt",
+     "LEI": "254900OPPU84GM83MG36",
+     "legalName": "E2X8OLaLnM0XRQEYgM5UV3bZmWg3UUn7CP4SoKkvsl-s",
+     "address": "E-0luqYSg6cPcMFmhiAz8VBQObZLmTQPrgsr7Z1j6CA4",
+     "phone": "E6lty8H2sA_1acq8zg89_kqF194DbF1cDpwA7UPtwjPQ"
+   }
+}
+</pre><a href="#section-4.2-4" class="pilcrow">¶</a>
+</div>
+<p id="section-4.2-5">It is important to note that if this version of the credential is the one issued to the holder and the signature over the entire credential is on the serialized data of this version of the credential it is the only version that can be presented.  The full SAD data of the three nested blocks would be delivered out of band from the signed credential.  The top level schema would describe the blocks with conditional subschema for each section.  The credential signature becomes a cryptographic commitment to the contents of the overall credential as well as the content of each of the blocks and will still validate the presented credential with significantly less bandwidth.<a href="#section-4.2-5" class="pilcrow">¶</a></p>
+<p id="section-4.2-6">With this approach, credential presentation request and exchange protocols can be created that modify the schema with the conditional subschema, removing the conditions that allow for SAIDs in place of the required (or presented) nested blocks.  The modified schema can be used in such a protocol to indicate the required sections to be delivered out of bounds or as a commitment to provide the nested blocks after the crendential presentation has occurred.<a href="#section-4.2-6" class="pilcrow">¶</a></p>
+</section>
+</div>
+</section>
+</div>
+<div id="conventions-and-definitions">
+<section id="section-5">
+      <h2 id="name-conventions-and-definitions">
+<a href="#section-5" class="section-number selfRef">5. </a><a href="#name-conventions-and-definitions" class="section-name selfRef">Conventions and Definitions</a>
+      </h2>
+<p id="section-5-1">The key words "<span class="bcp14">MUST</span>", "<span class="bcp14">MUST NOT</span>", "<span class="bcp14">REQUIRED</span>", "<span class="bcp14">SHALL</span>", "<span class="bcp14">SHALL NOT</span>", "<span class="bcp14">SHOULD</span>", "<span class="bcp14">SHOULD NOT</span>", "<span class="bcp14">RECOMMENDED</span>", "<span class="bcp14">NOT RECOMMENDED</span>",
+"<span class="bcp14">MAY</span>", and "<span class="bcp14">OPTIONAL</span>" in this document are to be interpreted as
+described in BCP 14 <span>[<a href="#RFC2119" class="xref">RFC2119</a>]</span> <span>[<a href="#RFC8174" class="xref">RFC8174</a>]</span> when, and only when, they
+appear in all capitals, as shown here.<a href="#section-5-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="security-considerations">
+<section id="section-6">
+      <h2 id="name-security-considerations">
+<a href="#section-6" class="section-number selfRef">6. </a><a href="#name-security-considerations" class="section-name selfRef">Security Considerations</a>
+      </h2>
+<p id="section-6-1">TODO Security<a href="#section-6-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="iana-considerations">
+<section id="section-7">
+      <h2 id="name-iana-considerations">
+<a href="#section-7" class="section-number selfRef">7. </a><a href="#name-iana-considerations" class="section-name selfRef">IANA Considerations</a>
+      </h2>
+<p id="section-7-1">This document has no IANA actions.<a href="#section-7-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<section id="section-8">
+      <h2 id="name-references">
+<a href="#section-8" class="section-number selfRef">8. </a><a href="#name-references" class="section-name selfRef">References</a>
+      </h2>
+<section id="section-8.1">
+        <h3 id="name-normative-references">
+<a href="#section-8.1" class="section-number selfRef">8.1. </a><a href="#name-normative-references" class="section-name selfRef">Normative References</a>
+        </h3>
+<dl class="references">
+<dt id="ACDC">[ACDC]</dt>
+        <dd>
+<span class="refAuthor">Smith, S.</span>, <span class="refTitle">"Authentic Data Chained Containers"</span>, <time datetime="2021" class="refDate">2021</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/draft-ssmith-acdc/">https://datatracker.ietf.org/doc/draft-ssmith-acdc/</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="CESR">[CESR]</dt>
+        <dd>
+<span class="refAuthor">Smith, S.</span>, <span class="refTitle">"Composable Event Streaming Representation (CESR)"</span>, <time datetime="2021" class="refDate">2021</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/draft-ssmith-cesr/">https://datatracker.ietf.org/doc/draft-ssmith-cesr/</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC2119">[RFC2119]</dt>
+        <dd>
+<span class="refAuthor">Bradner, S.</span>, <span class="refTitle">"Key words for use in RFCs to Indicate Requirement Levels"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 2119</span>, <span class="seriesInfo">DOI 10.17487/RFC2119</span>, <time datetime="1997-03" class="refDate">March 1997</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc2119">https://www.rfc-editor.org/rfc/rfc2119</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC8174">[RFC8174]</dt>
+        <dd>
+<span class="refAuthor">Leiba, B.</span>, <span class="refTitle">"Ambiguity of Uppercase vs Lowercase in RFC 2119 Key Words"</span>, <span class="seriesInfo">BCP 14</span>, <span class="seriesInfo">RFC 8174</span>, <span class="seriesInfo">DOI 10.17487/RFC8174</span>, <time datetime="2017-05" class="refDate">May 2017</time>, <span>&lt;<a href="https://www.rfc-editor.org/rfc/rfc8174">https://www.rfc-editor.org/rfc/rfc8174</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="SAID">[SAID]</dt>
+      <dd>
+<span class="refAuthor">Smith, S.</span>, <span class="refTitle">"Self-Addressing IDentifier (SAID)"</span>, <time datetime="2021" class="refDate">2021</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/draft-ssmith-said/">https://datatracker.ietf.org/doc/draft-ssmith-said/</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+</dl>
+</section>
+<section id="section-8.2">
+        <h3 id="name-informative-references">
+<a href="#section-8.2" class="section-number selfRef">8.2. </a><a href="#name-informative-references" class="section-name selfRef">Informative References</a>
+        </h3>
+<dl class="references">
+<dt id="JSON">[JSON]</dt>
+        <dd>
+<span class="refTitle">"JavaScript Object Notation Delimeters"</span>, <span>n.d.</span>, <span>&lt;<a href="https://www.json.org/json-en.html">https://www.json.org/json-en.html</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="JSONPath">[JSONPath]</dt>
+        <dd>
+<span class="refAuthor">Gössner, S.</span>, <span class="refAuthor">Normington, G.</span>, and <span class="refAuthor">C. Bormann</span>, <span class="refTitle">"JSONPath - Query expressions for JSON"</span>, <time datetime="2021-10-25" class="refDate">25 October 2021</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/draft-ietf-jsonpath-base/">https://datatracker.ietf.org/doc/draft-ietf-jsonpath-base/</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="KERI">[KERI]</dt>
+        <dd>
+<span class="refAuthor">Smith, S.</span>, <span class="refTitle">"Key Event Receipt Infrastructure (KERI)"</span>, <time datetime="2021" class="refDate">2021</time>, <span>&lt;<a href="https://arxiv.org/abs/1907.02143">https://arxiv.org/abs/1907.02143</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+<dt id="RFC6901">[RFC6901]</dt>
+      <dd>
+<span class="refAuthor">Bryan, P.C.</span>, <span class="refAuthor">Zyp, K.</span>, and <span class="refAuthor">M. Nottingham</span>, <span class="refTitle">"JavaScript Object Notation (JSON) Pointer"</span>, <time datetime="2003" class="refDate">2003</time>, <span>&lt;<a href="https://datatracker.ietf.org/doc/html/rfc6901">https://datatracker.ietf.org/doc/html/rfc6901</a>&gt;</span>. </dd>
+<dd class="break"></dd>
+</dl>
+</section>
+</section>
+<div id="acknowledgments">
+<section id="appendix-A">
+      <h2 id="name-acknowledgments">
+<a href="#name-acknowledgments" class="section-name selfRef">Acknowledgments</a>
+      </h2>
+<p id="appendix-A-1">Dr Sam Smith, Kevin Griffin and the Global Legal Entity Identifier Foundation (GLEIF)<a href="#appendix-A-1" class="pilcrow">¶</a></p>
+</section>
+</div>
+<div id="authors-addresses">
+<section id="appendix-B">
+      <h2 id="name-authors-address">
+<a href="#name-authors-address" class="section-name selfRef">Author's Address</a>
+      </h2>
+<address class="vcard">
+        <div dir="auto" class="left"><span class="fn nameRole">Phil Feairheller</span></div>
+<div dir="auto" class="left"><span class="org">GLEIF</span></div>
+<div class="email">
+<span>Email:</span>
+<a href="mailto:Philip.Feairheller@gleif.org" class="email">Philip.Feairheller@gleif.org</a>
+</div>
+</address>
+</section>
+</div>
+<script>const toc = document.getElementById("toc");
+toc.querySelector("h2").addEventListener("click", e => {
+  toc.classList.toggle("active");
+});
+toc.querySelector("nav").addEventListener("click", e => {
+  toc.classList.remove("active");
+});
+</script>
+</body>
+</html>
