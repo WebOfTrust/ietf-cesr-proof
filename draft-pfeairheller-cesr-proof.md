@@ -60,6 +60,27 @@ informative:
     target: https://www.json.org/json-en.html
     title: JavaScript Object Notation Delimeters
 
+  CBOR:
+    target: https://en.wikipedia.org/wiki/CBOR
+    title: CBOR Mapping Object Codes
+
+  RFC8949:
+    target: https://datatracker.ietf.org/doc/rfc8949/
+    title: Concise Binary Object Representation (CBOR)
+    author:
+      -
+        ins: C. Bormann
+        name: Carsten Bormann
+      -
+        ins: P. Hoffman
+        name: Paul Hoffman
+
+    date: 2020-12-04
+
+  MGPK:
+    target: https://github.com/msgpack/msgpack/blob/master/spec.md
+    title: Msgpack Mapping Object Codes
+
   RFC6901:
     target: https://datatracker.ietf.org/doc/html/rfc6901
     title: JavaScript Object Notation (JSON) Pointer
@@ -89,41 +110,42 @@ tags: IETF, CESR, SAID, KERI, ACDC
 
 --- abstract
 
-CESR Proof Signatures are an extension to the Composable Event Streaming Representation [CESR] that provide transposable cryptographic signature attachments on self-addressing data (SAD) [SAID]. A SAD (such as an Authentic Chained Data Container (ACDC) Verifiable Credential [ACDC]) may be signed with a CESR Proof Signature and streamed alongside any other CESR content.  In addition, a signed SAD can be embedded inside another SAD and the CESR proof signature attachment can be transposed across envelope boundaries and streamed without losing any cryptographic integrity.
+CESR Proof Signatures are an extension to the Composable Event Streaming Representation [CESR] that provide transposable cryptographic signature attachments on self-addressing data (SAD) [SAID]. Any SAD, such as an Authentic Chained Data Container (ACDC) Verifiable Credential [ACDC] for example, may be signed with a CESR Proof Signature and streamed along with any other CESR content.  In addition, a signed SAD can be embedded inside another SAD and the CESR proof signature attachment can be transposed across envelope boundaries and streamed without losing any cryptographic integrity.
 
 --- middle
 
 # Introduction
 
-Composable Event Streaming Representation (CESR) is a dual text-binary encoding format that has the unique property of text-binary concatenation composability. The CESR specification not only provides the definition of the streaming format but also the codes needed for creating and sharing all event types and signatures on all event types for the Key Event Receipt Infrastructure (KERI) [KERI]. While all KERI event messages are self-addressing data (SAD), there is a broad class of SADs that are not KERI events but that require signature attachments. ACDC Verifiable credentials fit into this class of SADs. With more complex data structures represented as SADs, such as verifiable credentials, there is a need to provide signature attachments on nested subsets of SADs. Similar to indices in indexed controller signatures in KERI that specify the location of the public key they represent, nested SAD signatures need a path mechanism to specify the exact location of the nested content that they are signing. CESR Proof Signatures provide this mechanism with the CESR SAD Path Language and new attachment codes, detailed in this specification.
+Composable Event Streaming Representation (CESR) is a dual text-binary encoding format that has the unique property of text-binary concatenation composability. The CESR specification not only provides the definition of the streaming format but also the attachment codes needed for differentiating the types of cryptographic material (such as signatures) used as attachments on all event types for the Key Event Receipt Infrastructure (KERI) [KERI]. While all KERI event messages are self-addressing data (SAD), there is a broad class of SADs that are not KERI events but that require signature attachments. ACDC Verifiable credentials fit into this class of SADs. With more complex data structures represented as SADs, such as verifiable credentials, there is a need to provide signature attachments on nested subsets of SADs. Similar to indices in indexed controller signatures in KERI that specify the location of the public key they represent, nested SAD signatures need a path mechanism to specify the exact location of the nested content that they are signing. CESR Proof Signatures provide this mechanism with the CESR SAD Path Language and new CESR attachment codes, detailed in this specification.
 
 ## Streamable SADs
-A primary goal of CESR Proof Signatures is to allow any signed self-addressing data (SAD) to be streamed inline with any other CESR content.  In support of that goal, CESR Proof Signatures leverage CESR attachments to define a signature scheme that can be attached to any SAD content serialized as JSON, MessagePack or CBOR.  Using this capability, SADs signed with CESR Proof Signatures can be streamed inline in either the text or binary domain alongside any other KERI event message over, for example TCP or UDP.  In addition, signed SADs can be transported via HTTP as a CESR HTTP Request (todo: reference needed).
+A primary goal of CESR Proof Signatures is to allow any signed self-addressing data (SAD) to be streamed inline with any other CESR content.  In support of that goal, CESR Proof Signatures leverage CESR attachments to define a signature scheme that can be attached to any SAD content serialized as JSON [JSON], MessagePack [MGPK] or CBOR [CBOR].  Using this capability, SADs signed with CESR Proof Signatures can be streamed inline in either the text (T) or binary (B) domain alongside any other KERI event message over, for example TCP or UDP.  In addition, signed SADs can be transported via HTTP as a CESR HTTP Request (todo: reference needed).
 
 ## Nested Partial Signatures
-CESR Proof Signatures can be used to sign as many portions of a SAD (including the entire SAD) whether the signed subsets are SADs or the self-addressing identifer (SAID) of a SAD.  A new CESR count code is included with this specification to allow for multiple signatures on nested portions of a SAD to be grouped together under one attachment.  By including a SAD Path in the new CESR attachment for grouping signatures, the entire group of signatures can be transposed across envelope boundaries by changing only the root path of the group attachment code.
+CESR Proof Signatures can be used to sign as many portions of a SAD as needed, including the entire SAD. The signed subsets are either SADs themselves or the self-addressing identifer (SAID) of a SAD that will be provided out of band.  A new CESR count code is included with this specification to allow for multiple signatures on nested portions of a SAD to be grouped together under one attachment.  By including a SAD Path in the new CESR attachment for grouping signatures, the entire group of signatures can be transposed across envelope boundaries by changing only the root path of the group attachment code.
 
 ## Transposable Signature Attachments
 
-There are several events in KERI that can contain context specific embedded self-addressing data (SADs). Exchange events (`exn`) for peer-to-peer communication and Replay events (`rpy`) for responding to data requests as well as Expose events (`exp`) for providing anchored data are all examples of KERI events that contain embedded SADs as part of their payload. If the SAD payload for one of these event types is signed with a CESR attachment, the resulting structure is not embeddable in one of the mapping serializations (JSON, CBOR, MessagePack) supported by CESR. To solve this problem, CESR Proof Signatures are transposable across envelope boundaries in that a single SAD signature or an entire signature group on any given SAD can be transposed to attach to the end of an enveloping SAD without losing its meaning. This unique feature is provided by the SAD Path language used in either a SAD signature or the root path designation in the outermost attachment code of any SAD signature group.  These paths can be updated to point to the embedded location of the signed SAD inside the envelope. Protocols for verifiable credential issuance and proof presentation can be defined using this capability to embed the same verifiable credential SAD at and location in an enveloping `exn` message as appropriate for the protocol without having to define a unique signature scheme for each protocol.
+There are several events in KERI that can contain context specific embedded self-addressing data (SADs). Exchange events (`exn`) for peer-to-peer communication and Replay events (`rpy`) for responding to data requests as well as Expose events (`exp`) for providing anchored data are all examples of KERI events that contain embedded SADs as part of their payload. If the SAD payload for one of these event types is signed with a CESR attachment, the resulting structure is not embeddable in one of the serializations of map or dictionary like data models. (JSON, CBOR, MessagePack) supported by CESR. To solve this problem, CESR Proof Signatures are transposable across envelope boundaries in that a single SAD signature or an entire signature group on any given SAD can be transposed to attach to the end of an enveloping SAD without losing its meaning. This unique feature is provided by the SAD Path language used in either a SAD signature or the root path designation in the outermost attachment code of any SAD signature group.  These paths can be updated to point to the embedded location of the signed SAD inside the envelope. Protocols for verifiable credential issuance and proof presentation can be defined using this capability to embed the same verifiable credential SAD at and location in an enveloping `exn` message as appropriate for the protocol without having to define a unique signature scheme for each protocol.
 
 
 # CESR SAD Path Language
 
-CESR Proof Signatures defines a SAD Path Language to be used in signature attachments for specifying the location of the SAD content within the signed SAD that a signature attachment is verifying. This path language has a more limited scope than alternatives like JSONPtr [RFC6901] or JSONPath [JSONPath] and is therefore simpler and more compact when encoding in CESR signature attachments. SADs in CESR and therefore CESR Proof Signatures require static field ordering of all maps. The SAD path language takes advantage of this feature to allow for a base64 compatible syntax into SADs even when a SAD uses non-base64 compatible characters for field labels.
+CESR Proof Signatures defines a SAD Path Language to be used in signature attachments for specifying the location of the SAD content within the signed SAD that a signature attachment is verifying. This path language has a more limited scope than alternatives like JSONPtr [RFC6901] or JSONPath [JSONPath] and is therefore simpler and more compact when encoding in CESR signature attachments. SADs in CESR and therefore CESR Proof Signatures require static field ordering of all maps. The SAD path language takes advantage of this feature to allow for a Base64 compatible syntax into SADs even when a SAD uses non-Base64 compatible characters for field labels.
 
 ## Description and Usage
 
-The SAD path language contains a single reserved character, the `-` (dash) character. Similar to the `/` (forward slack) character in URLs, the `-` in the SAD Path Language is the path separator between components of the path. The `-` was selected because it is a one of the valid base64 characters.
+The SAD path language contains a single reserved character, the `-` (dash) character. Similar to the `/` (forward slack) character in URLs, the `-` in the SAD Path Language is the path separator between components of the path. The `-` was selected because it is a one of the valid Base64 characters.
 
 The simplest path in the SAD Path Language is a single `-` character representing the root path which specifies the top level of the SAD content.
 
 Root Path
+
 ~~~
  -
 ~~~
 
-After the root path, path components follow, delimited by the `-` character. Path components may be integer indices into field labels or arrays or may be full field labels. No wildcards are supported by the SAD Path Language
+After the root path, path components follow, delimited by the `-` character. Path components may be integer indices into field labels or arrays or may be full field labels. No wildcards are supported by the SAD Path Language.
 
 An example SAD Path using only labels that resolve to map contexts follows:
 
@@ -139,10 +161,10 @@ In addition, integers can be specified and their meaning is dependent on the con
 
 The rules for a SAD Path Language processor are simple. If a path consists of only a single `-`, it represents the root of the SAD and therefore the entire SAD content. Following any `-` character is a path component that points to a field if the current context is a map in the SAD or is an index of an element if the current context is an array. It is an error for any sub-path to resolve to a value this is not a map or an array.  Any trailing `-` character in a SAD Path can be ignored.
 
-The root context (after the initial `-`) is always a map. Therefore, the first path component represents a field of that map. The SAD is traversed following the path components as field labels or indexes in arrays until the end of the path is reached. The value at the end of the path is then returned as the resolution of the SAD Path. If the current context is a map and the path component is an integer, the path component represents an index into fields of the map. This feature takes advantage of the static field ordering of SADs and is used against any SAD that contains field labels that use non-base64 compatible characters or the `-` character. Any combination of integer and field label path components can be used when the current context is a map. All path components MUST be an integer when the current context is an array.
+The root context (after the initial `-`) is always a map. Therefore, the first path component represents a field of that map. The SAD is traversed following the path components as field labels or indexes in arrays until the end of the path is reached. The value at the end of the path is then returned as the resolution of the SAD Path. If the current context is a map and the path component is an integer, the path component represents an index into fields of the map. This feature takes advantage of the static field ordering of SADs and is used against any SAD that contains field labels that use non-Base64 compatible characters or the `-` character. Any combination of integer and field label path components can be used when the current context is a map. All path components MUST be an integer when the current context is an array.
 
 ## CESR Encoding for SAD Path Language
-SAD Paths are variable raw size primitives that require CESR variable size codes.  We will use the `A` small variable size code for SAD Paths which has 3 code entries being added to the Master Code Table, `4A##`, `5A##` and `6A##` for SAD Paths with 0 lead bytes, 1 lead byte and 2 lead bytes respecively.  This small variable side code is reserved for text values that only contain valid Base64 characters.  These codes are detailed in Table 2 below.  The selector not only encodes the table but also implicitly encodes the number of lead bytes. The variable size is measured in quadlets of 4 characters each in the T domain and equivalently in triplets of 3 bytes each in the B domain. Thus computing the number of characters when parsing or off-loading in the T domain means multiplying the variable size by 4. Computing the number of bytes when parsing or off-loading in the B domain means multiplying the variable size by 3. The two Base64 size characters provide value lengths in quadlets/triplets from 0 to 4095 (64**2 -1). This corresponds to path lengths of up to 16,380 characters (4095 * 4) or 12,285 bytes (4095 * 3).
+SAD Paths are variable raw size primitives that require CESR variable size codes.  We will use the `A` small variable size code for SAD Paths which has 3 code entries being added to the Master Code Table, `4A##`, `5A##` and `6A##` for SAD Paths with 0 lead bytes, 1 lead byte and 2 lead bytes respecively.  This small variable size code is reserved for text values that only contain valid Base64 characters.  These codes are detailed in Table 2 below.  The selector not only encodes the table but also implicitly encodes the number of lead bytes. The variable size is measured in quadlets of 4 characters each in the T domain and equivalently in triplets of 3 bytes each in the B domain. Thus computing the number of characters when parsing or off-loading in the T domain means multiplying the variable size by 4. Computing the number of bytes when parsing or off-loading in the B domain means multiplying the variable size by 3. The two Base64 size characters provide value lengths in quadlets/triplets from 0 to 4095 (64**2 -1). This corresponds to path lengths of up to 16,380 characters (4095 * 4) or 12,285 bytes (4095 * 3).
 
 
 ## SAD Path Examples
@@ -186,7 +208,7 @@ Containers (ACDCs) representing verifiable credentials.
 
 Figure 1. Example ACDC Credential SAD
 
-The examples in Table 1 represent all the features of the SAD Path language when referring to the SAD in Figure 1. along with the CESR text encodeing.
+The examples in Table 1 represent all the features of the SAD Path language when referring to the SAD in Figure 1. along with the CESR text encoding.
 
 |   SAD Path   | Result                            | CESR T Domain Encoding |
 |:-------------|:----------------------------------|:------|
@@ -202,21 +224,34 @@ The examples in Table 1 represent all the features of the SAD Path language when
 
 
 ## Alternative Pathing / Query Languages
-The SAD Path language was chosen over alternatives such as JSONPtr and JSONPath in order to create a more compact representation of a pathing language in the text domain.  Many of the features of the alternatives are not needed for CESR Proof Signatures.  The only token in the language (`-`) is base64 compatible.  The use of field indices in SADs (which require staticly ordered fields) allows for base64 compatible pathing even when the field labels of the target SAD are not base64 compatible.  The language accomplishes the goal of uniquely locating any path in a SAD using minimally sufficient means in a manner that allows it to be embedded in a CESR attachment as base64.  Alternative syntaxes would need to be base64 encoded to be used in a CESR attachment in the text domain thus incurring the additional bandwidth cost of such an encoding.
+The SAD Path language was chosen over alternatives such as JSONPtr and JSONPath in order to create a more compact representation of a pathing language in the text domain.  Many of the features of the alternatives are not needed for CESR Proof Signatures.  The only token in the language (`-`) is Base64 compatible.  The use of field indices in SADs (which require staticly ordered fields) allows for Base64 compatible pathing even when the field labels of the target SAD are not Base64 compatible.  The language accomplishes the goal of uniquely locating any path in a SAD using minimally sufficient means in a manner that allows it to be embedded in a CESR attachment as Base64.  Alternative syntaxes would need to be Base64 encoded to be used in a CESR attachment in the text domain thus incurring the additional bandwidth cost of such an encoding.
 
 # CESR Attachments
 
-This specification adds 2 *Counter Four Character Codes* to the Master Code Table and 1 *Small Variable Raw Size Code Type* to the Master Code Table (which results in 3 new code entries).  The additions to the Master Code Table of CESR is shown below:
+This specification adds 2 *Counter Four Character Codes* to the Master Code Table and uses 1 *Small Variable Raw Size Code Type* and 1 *Large Variable Raw Size Code Type* from the Master Code Table (each of which have 3 code entries).
+
+## Counter Four Character Codes
+The SAD Path Signature counter code is represented by the four character code `-J##`.  The first two characters reserve this code for attaching the couplet (SAD Path, Signature Group).  The second two characters represent the count in hexidecimal of SAD path signatures are in this attachment.  The path is attached in the T domain using the codes described in the next section.  The signature group is from either a transferable identifier or a non-transferable identifier and therefore attached using the CESR codes `-F##` or `-C##` respectively as described in the CESR Specification [CESR].
+
+## Variable Size Codes
+The code `A` is reserved as a Small Variable Raw Size Code and `AAA` as a Large Variable Raw Size Code for Base64 URL safe strings.  SAD Paths are Base64 URL safe strings and so leverage these codes when encoded in the CESR T domain.  To account for the variable nature of path strings, the variable size types reserve 3 codes each with prefix indicators of lead byte size used for adjusting the T domain encoding to multiples of 4 characters and the B domain to multiples of 3 bytes.  For the *Small* codes the prefix indicators are `4`, `5` and `6` representing 0, 1 and 2 lead bytes respectively and for *Large* codes the prefix indicators are `7`, `8`, and `9` representing 0, 1 and 2 lead bytes respectively.  The resulting 6 code entries are displayed in the table that follows.
+
+
+The additions to the Master Code Table of CESR is shown below:
 
 |   Code   | Description                                                                         | Code Length | Count or Index Length | Total Length |
 |:--------:|:----------------------------------|:------------:|:-------------:|:------------:|
 |          |                        **Counter Four Character Codes**                          |             |              |              |
-|   -J##   | Count of attached qualified Base64 SAD path sig groups path+sig group (trans or non-trans)                       |      4      |       2      |       4      |
-|   -K##   | Count of attached qualified Base64 SAD Path groups                    |      4      |       2      |       4      |
+|   -J##   | Count of attached qualified Base64 SAD path sig groups path+sig group (trans or non-trans)                       |      2      |       2      |       4      |
+|   -K##   | Count of attached qualified Base64 SAD Path groups                    |      2      |       2      |       4      |
 |          |                        **Small Variable Raw Size Code**                          |             |              |              |
-|   4A##   | String Base64 Only with 0 Lead Bytes                                                  |      4      |       2      |       4      |
-|   5A##   | String Base64 Only with 1 Lead Byte                                                   |      4      |       2      |       4      |
-|   6A##   | String Base64 Only with 2 Lead Bytes                                                  |      4      |       2      |       4      |
+|   4A##   | String Base64 Only with 0 Lead Bytes                                                  |      2      |       2      |       4      |
+|   5A##   | String Base64 Only with 1 Lead Byte                                                   |      2      |       2      |       4      |
+|   6A##   | String Base64 Only with 2 Lead Bytes                                                  |      2      |       2      |       4      |
+|          |                        **Large Variable Raw Size Code**                          |             |              |              |
+|   7AAA####   | String Base64 Only with 0 Lead Bytes                                                  |      4      |       4      |       8      |
+|   8AAA####   | String Base64 Only with 1 Lead Byte                                                   |      4      |       4      |       8      |
+|   9AAA####   | String Base64 Only with 2 Lead Bytes                                                  |      4      |       4      |       8      |
 
 
 ## CESR Signature Attachments
@@ -234,14 +269,16 @@ Signatures on SAD content require signing the serialized encoding format of the 
 
 where KERI is the identifier of KERI events followed by the hexidecimal major and minor version code and then the serialized encoding format of the event, JSON in this case.  KERI and ACDC support JSON, MessagePack and CBOR currently.  Field ordering is important when apply cryptographic signatures and all serialized encoding formats must support static field ordering.  Serializing a SAD starts with reading the version string from the SAD field (`v` for KERI and ACDC events message) to determine the serialized encoding format of the message.  The serialized encoding format is used to generate the SAID at creation and can not be changed.  The event map is serialized using a library that ensures the static field order perserved across serialization and deserialization and the private keys are used to generate the qualified cryptographic material that represents the signatures over the SAD content.
 
-The same serialized encoding format must be used when nesting a SAD in another SAD.  For example, an ACDC credential that was issued using JSON can only be embedded and presented in a KERI `exn` presentation event message that uses JSON as its serialized encoding format.  That same credential can not be transmitted using CBOR or MessagePack.  Controllers can rely on this restriction when verifying signatures of embedded SADs.  When processing the signature attachments and resolving the data at a given SAD path, the serialization of the outter most SAD can be used at any depth of the traversal.  New verison string processing does not need to occur at nested paths.  However, if credential signature verification is pipelined and process in parallel processes from event message processing, the version string of the nested SAD will still be valid and can be used if needed.
+The same serialized encoding format must be used when nesting a SAD in another SAD.  For example, an ACDC credential that was issued using JSON can only be embedded and presented in a KERI `exn` presentation event message that uses JSON as its serialized encoding format.  That same credential can not be transmitted using CBOR or MessagePack.  Controllers can rely on this restriction when verifying signatures of embedded SADs.  When processing the signature attachments and resolving the data at a given SAD path, the serialization of the outter most SAD can be used at any depth of the traversal.  New verison string processing does not need to occur at nested paths.  However, if credential signature verification is pipelined and processed in parallel to the event message such that the event message is not avaiable, the version string of the nested SAD will still be valid and can be used if needed.
+
+Each attached signature is accompanied by a SAD Path that indicates the content that is signed.  The path must resolve within the enveloping SAD to either a nested SAD (map) or a SAID (string) of an externally provided SAD.  This of course, includes a root path that resolves to the enveloping SAD itself.
 
 
 ### Signatures with Non-Transferable Identifiers
-Non-transferable identifiers only ever have one public key.  In addition, the identifier prefix is identical to the qualified cryptographic material of the public key and therefore no KEL is required to validate the signature of a non-transferable identifier.  The attachment code for witness receipt couplets, used for CESR Proof Signatures,  takes this into account.  The four character couner code `-C##` is used for non-transferable identifiers and contains the signing identfier prefix and the signature.  Since the verification key can be extracted from the identifier prefix and the identifier can not be rotated, all that is required to validate the signature is the identifier prefix, the data signed and the signature.
+Non-transferable identifiers only ever have one public key.  In addition, the identifier prefix is identical to the qualified cryptographic material of the public key and therefore no KEL is required to validate the signature of a non-transferable identifier [KERI].  The attachment code for witness receipt couplets, used for CESR Proof Signatures,  takes this into account.  The four character couner code `-C##` is used for non-transferable identifiers and contains the signing identfier prefix and the signature [CESR].  Since the verification key can be extracted from the identifier prefix and the identifier can not be rotated, all that is required to validate the signature is the identifier prefix, the data signed and the signature.
 
 ### Signatures with Transferable Identifiers
-Transferable identifiers require full KEL resolution and verfication to determine the correct public key used to sign some content.  In addition, the attachment code used for transferable identifiers, `-F##` must specify the location in the KEL at which point the signature was generated.  To accomplish this, this counter code includes the identifier prefix, the sequence number of the event in the KEL, the digest of the event in the KEL and the indexed signatures (transferable identifiers support multiple public/private keys and require index signatures).  Using all the values, one can verify the signature(s) by retrieving the KEL of the identifier prefix and determine the key state at the sequence number along with validating the digest of the event against the actual event.  Then using the key(s) at the determined key state, validate the signature(s).
+Transferable identifiers require full KEL resolution and verfication to determine the correct public key used to sign some content [KERI].  In addition, the attachment code used for transferable identifiers, `-F##` must specify the location in the KEL at which point the signature was generated [CESR].  To accomplish this, this counter code includes the identifier prefix, the sequence number of the event in the KEL, the digest of the event in the KEL and the indexed signatures (transferable identifiers support multiple public/private keys and require index signatures).  Using all the values, one can verify the signature(s) by retrieving the KEL of the identifier prefix and determine the key state at the sequence number along with validating the digest of the event against the actual event.  Then using the key(s) at the determined key state, validate the signature(s).
 
 
 ## Additional Count Codes
@@ -279,30 +316,54 @@ The SAD Path Signature Group provides a four character counter code, `-J##`, for
 ~~~
 
 
-the following signature applies to the nested `credential` SAD signed by a transferable identifier using the transferable index signature group. The example is annotated with comments, spaces and line feeds for clarity.
+the following signature applies to the nested `credential` SAD signed by a transferable identifier using the transferable index signature group. The example is annotated with spaces and line feeds for clarity and an accompanied table is provided with comments.
 
 ~~~
--JAB              # SAD path signature group counter code 1 following the group
-6AAEAAA-a-credential  # encoded SAD path designation
--FAB     # Trans Indexed Sig Groups counter code 1 following group
-E_T2_p83_gRSuAYvGhqV3S0JzYEF2dIa-OCPLbIhBO7Y    # trans prefix of signer for sigs
--EAB0AAAAAAAAAAAAAAAAAAAAAAB    # sequence number of est event of signer's public keys for sigs
-EwmQtlcszNoEIDfqD-Zih3N6o5B3humRKvBBln2juTEM      # digest of est event of signer's public keys for sigs
--AAD     # Controller Indexed Sigs counter code 3 following sigs
-AA5267UlFg1jHee4Dauht77SzGl8WUC_0oimYG5If3SdIOSzWM8Qs9SFajAilQcozXJVnbkY5stG_K4NbKdNB4AQ         # sig 0
-ABBgeqntZW3Gu4HL0h3odYz6LaZ_SMfmITL-Btoq_7OZFe3L16jmOe49Ur108wH7mnBaq2E_0U0N0c5vgrJtDpAQ    # sig 1
-ACTD7NDX93ZGTkZBBuSeSGsAQ7u0hngpNTZTK_Um7rUZGnLRNJvo5oOnnC1J2iBQHuxoq8PyjdT3BHS2LiPrs2Cg  # sig 2
+-JAB
+6AAEAAA-a-credential
+-FAB
+E_T2_p83_gRSuAYvGhqV3S0JzYEF2dIa-OCPLbIhBO7Y
+-EAB0AAAAAAAAAAAAAAAAAAAAAAB
+EwmQtlcszNoEIDfqD-Zih3N6o5B3humRKvBBln2juTEM
+-AAD
+AA5267UlFg1jHee4Dauht77SzGl8WUC_0oimYG5If3SdIOSzWM8Qs9SFajAilQcozXJVnbkY5stG_K4NbKdNB4AQ
+ABBgeqntZW3Gu4HL0h3odYz6LaZ_SMfmITL-Btoq_7OZFe3L16jmOe49Ur108wH7mnBaq2E_0U0N0c5vgrJtDpAQ
+ACTD7NDX93ZGTkZBBuSeSGsAQ7u0hngpNTZTK_Um7rUZGnLRNJvo5oOnnC1J2iBQHuxoq8PyjdT3BHS2LiPrs2Cg
 ~~~
+
+| code | description |
+| --- | ----------- |
+|-JAB| SAD path signature group counter code 1 following the group |
+|6AAEAAA-a-credential| encoded SAD path designation|
+|-FAB| Trans Indexed Sig Groups counter code 1 following group|
+|E_T2_p83_gRSuAYvGhqV3S0JzYEF2dIa-OCPLbIhBO7Y|trans prefix of signer for sigs|
+|-EAB0AAAAAAAAAAAAAAAAAAAAAAB|sequence number of est event of signer's public keys for sigs|
+|EwmQtlcszNoEIDfqD-Zih3N6o5B3humRKvBBln2juTEM| digest of est event of signer's public keys for sigs|
+|-AAD|Controller Indexed Sigs counter code 3 following sigs |
+|AA5267...4AQ| sig 0 |
+|ABBgeq...pAQ| sig 1 |
+|ACTD7N...2Cg| sig 2 |
+
 
 The next example demostrates the use of a non-transferable identifier to sign SAD content.  In this example, the entire nested SAD located at the `a` field is signed by the non-transferable identfier:
 
 ~~~
--JAB       # SAD path signature group counter code 1 following the group
-5AABAA-a    # encoded SAD path designation
--CAB       # NonTrans witness receipt couplet
-BmMfUwIOywRkyc5GyQXfgDA4UOAMvjvnXcaK9G939ArM  # non-trans prefix of signer of sig
-0BT7b5PzUBmts-lblgOBzdThIQjKCbq8gMinhymgr4_dD0JyfN6CjZhsOqqUYFmRhABQ-vPywggLATxBDnqQ3aBg  # sig
+-JAB
+5AABAA-a
+-CAB
+BmMfUwIOywRkyc5GyQXfgDA4UOAMvjvnXcaK9G939ArM
+0BT7b5PzUBmts-lblgOBzdThIQjKCbq8gMinhymgr4_dD0JyfN6CjZhsOqqUYFmRhABQ-vPywggLATxBDnqQ3aBg
 ~~~
+
+
+| code | description |
+| --- | ----------- |
+| -JAB | SAD path signature group counter code 1 following the group |
+| 5AABAA-a | encoded SAD path designation |
+| -CAB  | NonTrans witness receipt couplet |
+| BmMfUwIOywRkyc5GyQXfgDA4UOAMvjvnXcaK9G939ArM | non-trans prefix of signer of sig |
+| 0BT7b5... aBg | sig |
+
 
 ### SAD Path Groups
 The SAD Path Group provides a four character counter code, `-K##`, for attaching encoded variable length **root** SAD Path along with 1 or more SAD Path Signature Groups.  The root SAD Path identifies the root context against which the paths in all included SAD Path Signature Groups are resolved.  When parsing a SAD Path Group, if the root path is the single `-` character, all SAD paths are treated as absolute paths.  Otherwise, the root path is prepended to the SAD paths in each of the SAD Path Signature Groups.  Given the following snippet of a SAD Path Group:
@@ -518,6 +579,8 @@ With this approach, credential presentation request and exchange protocols can b
 TODO Security
 
 # IANA Considerations
+
+The Internet Assigned Numbers Authority (IANA) is a standards organization that oversees global IP address allocation, autonomous system number allocation, root zone management in the Domain Name System (DNS), media types, and other Internet Protocol-related symbols and Internet numbers.
 
 This document has no IANA actions.
 
