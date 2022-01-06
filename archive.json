@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2021-12-30T01:08:20.794212+00:00",
+  "timestamp": "2022-01-06T01:16:44.112226+00:00",
   "repo": "WebOfTrust/ietf-cesr-proof",
   "labels": [
     {
@@ -55,15 +55,15 @@
       "id": "I_kwDOGWk-OM5A-nEj",
       "title": "The first part of this sentence is confusing",
       "url": "https://github.com/WebOfTrust/ietf-cesr-proof/issues/10",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "henkvancann",
       "authorAssociation": "NONE",
       "assignees": [],
       "labels": [],
       "body": "https://github.com/WebOfTrust/ietf-cesr-proof/blob/main/draft-pfeairheller-cesr-proof.md\r\n--- abstract\r\n\r\nA SAD (such as an Authentic Chained Data Container (ACDC) Verifiable Credential [ACDC]) may be signed with a CESR Proof Signature and streamed alongside any other CESR content...",
       "createdAt": "2021-12-28T22:19:29Z",
-      "updatedAt": "2021-12-28T22:19:29Z",
-      "closedAt": null,
+      "updatedAt": "2022-01-05T21:11:10Z",
+      "closedAt": "2022-01-05T21:11:10Z",
       "comments": []
     },
     {
@@ -71,48 +71,72 @@
       "id": "I_kwDOGWk-OM5A-n-_",
       "title": "'attachment codes' are only mentioned once as a term",
       "url": "https://github.com/WebOfTrust/ietf-cesr-proof/issues/11",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "henkvancann",
       "authorAssociation": "NONE",
       "assignees": [],
       "labels": [],
       "body": "https://github.com/WebOfTrust/ietf-cesr-proof/blob/main/draft-pfeairheller-cesr-proof.md\r\n\r\n'attachment codes' need a brief explanation",
       "createdAt": "2021-12-28T22:30:57Z",
-      "updatedAt": "2021-12-28T22:30:57Z",
-      "closedAt": null,
-      "comments": []
+      "updatedAt": "2022-01-05T21:11:48Z",
+      "closedAt": "2022-01-05T21:11:48Z",
+      "comments": [
+        {
+          "author": "pfeairheller",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Closed with PR #19 ",
+          "createdAt": "2022-01-05T21:11:48Z",
+          "updatedAt": "2022-01-05T21:11:48Z"
+        }
+      ]
     },
     {
       "number": 12,
       "id": "I_kwDOGWk-OM5A-pxm",
       "title": "CBOR + MessagePack references ",
       "url": "https://github.com/WebOfTrust/ietf-cesr-proof/issues/12",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "henkvancann",
       "authorAssociation": "NONE",
       "assignees": [],
       "labels": [],
       "body": "https://github.com/WebOfTrust/ietf-cesr-proof/blob/main/draft-pfeairheller-cesr-proof.md#streamable-sads\r\n\r\nJSON is clearly referenced (which versions), CBOR + MessagePack references would be good too. Which versions and from which version-numbers will it work?\r\n",
       "createdAt": "2021-12-28T22:56:11Z",
-      "updatedAt": "2021-12-28T22:56:11Z",
-      "closedAt": null,
-      "comments": []
+      "updatedAt": "2022-01-05T21:11:57Z",
+      "closedAt": "2022-01-05T21:11:57Z",
+      "comments": [
+        {
+          "author": "pfeairheller",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Closed with PR #19 ",
+          "createdAt": "2022-01-05T21:11:57Z",
+          "updatedAt": "2022-01-05T21:11:57Z"
+        }
+      ]
     },
     {
       "number": 13,
       "id": "I_kwDOGWk-OM5A-qkz",
       "title": "Rephrase the first sentence of this block?",
       "url": "https://github.com/WebOfTrust/ietf-cesr-proof/issues/13",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "henkvancann",
       "authorAssociation": "NONE",
       "assignees": [],
       "labels": [],
       "body": "https://github.com/WebOfTrust/ietf-cesr-proof/blob/main/draft-pfeairheller-cesr-proof.md#nested-partial-signatures\r\n\r\nCESR Proof Signatures can be used to sign as many portions of a SAD (including the entire SAD) whether the signed subsets are SADs or the self-addressing identifer (SAID) of a SAD. \r\n\r\n\r\nCESR Proof Signatures can be used to sign as many portions (or 'subsets') of a SAD as needed, including the entire SAD. The signed subsets are either SADs themselves or the multisig part of the / one or more* self-addressing identifers (SAID) of Self Addressing Data (SAD). \r\n\r\n* I don't have clue, what it needs to be, but you get the idea: pls use shorter sentences and write the concept out a bit more for better understanding ;)",
       "createdAt": "2021-12-28T23:07:15Z",
-      "updatedAt": "2021-12-28T23:07:15Z",
-      "closedAt": null,
-      "comments": []
+      "updatedAt": "2022-01-05T21:12:07Z",
+      "closedAt": "2022-01-05T21:12:07Z",
+      "comments": [
+        {
+          "author": "pfeairheller",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Closed with PR #19 ",
+          "createdAt": "2022-01-05T21:12:07Z",
+          "updatedAt": "2022-01-05T21:12:07Z"
+        }
+      ]
     },
     {
       "number": 14,
@@ -126,9 +150,24 @@
       "labels": [],
       "body": "https://github.com/WebOfTrust/ietf-cesr-proof/blob/main/draft-pfeairheller-cesr-proof.md#transposable-signature-attachments\r\n\r\na drawing maybe says more than the words in this text block?",
       "createdAt": "2021-12-28T23:19:13Z",
-      "updatedAt": "2021-12-28T23:19:13Z",
+      "updatedAt": "2022-01-05T21:27:20Z",
       "closedAt": null,
-      "comments": []
+      "comments": [
+        {
+          "author": "pfeairheller",
+          "authorAssociation": "COLLABORATOR",
+          "body": "I do not believe infographics are allowed in IETF specs.  And I would know what a drawing of this would look like.",
+          "createdAt": "2022-01-05T21:13:51Z",
+          "updatedAt": "2022-01-05T21:13:51Z"
+        },
+        {
+          "author": "henkvancann",
+          "authorAssociation": "NONE",
+          "body": "I do not believe infographics are allowed in IETF specs -> Fair enough. \r\n\r\nAnd I would know what a drawing of this would look like ->\r\nAm I correct with this sketch? In this example Sig A of Payload in envelop A is transposed. Pls correct me if I am wrong.\r\n\r\n![signal-2022-01-05-222406](https://user-images.githubusercontent.com/479356/148291726-c7837b1c-04f2-4fcb-a687-bfc295d53eb5.jpeg)\r\n\r\n",
+          "createdAt": "2022-01-05T21:27:20Z",
+          "updatedAt": "2022-01-05T21:27:20Z"
+        }
+      ]
     },
     {
       "number": 15,
@@ -173,48 +212,86 @@
       "id": "I_kwDOGWk-OM5A-vPn",
       "title": "Term 'Map' could be defined / explained better",
       "url": "https://github.com/WebOfTrust/ietf-cesr-proof/issues/16",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "henkvancann",
       "authorAssociation": "NONE",
       "assignees": [],
       "labels": [],
       "body": "the picture show the first occurrence of the term 'map' in https://github.com/WebOfTrust/ietf-cesr-proof/blob/main/draft-pfeairheller-cesr-proof.md#transposable-signature-attachments\r\n\r\n<img width=\"1043\" alt=\"Screenshot 2021-12-29 at 01 11 12\" src=\"https://user-images.githubusercontent.com/479356/147616190-95ba2c5b-4f68-45a3-a00a-e510a8f6b99a.png\">\r\n\r\nIs a map the same as an envelop? \r\n\r\nThe term 'Map' could be defined / explained better",
       "createdAt": "2021-12-29T00:13:31Z",
-      "updatedAt": "2021-12-29T00:13:31Z",
-      "closedAt": null,
-      "comments": []
+      "updatedAt": "2022-01-05T21:12:20Z",
+      "closedAt": "2022-01-05T21:12:20Z",
+      "comments": [
+        {
+          "author": "pfeairheller",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Ack",
+          "createdAt": "2022-01-05T20:44:24Z",
+          "updatedAt": "2022-01-05T20:44:24Z"
+        },
+        {
+          "author": "pfeairheller",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Closed with PR #19 ",
+          "createdAt": "2022-01-05T21:12:20Z",
+          "updatedAt": "2022-01-05T21:12:20Z"
+        }
+      ]
     },
     {
       "number": 17,
       "id": "I_kwDOGWk-OM5A-v91",
       "title": "CESR encoding of SAD paths",
       "url": "https://github.com/WebOfTrust/ietf-cesr-proof/issues/17",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "henkvancann",
       "authorAssociation": "NONE",
       "assignees": [],
       "labels": [],
       "body": "<img width=\"1039\" alt=\"Screenshot 2021-12-29 at 01 18 53\" src=\"https://user-images.githubusercontent.com/479356/147616439-6c958f98-7d60-45c1-8677-ff05ac4609e2.png\">\r\n\r\ntypo encodeing -> encoding \r\n\r\nQuestion: is this an example of the tranposibility of CESR too? \r\nSAD Paths in text <-> binary encoding \r\n\r\nTerm 'T Domain' is not explained and new in this paragraph",
       "createdAt": "2021-12-29T00:22:26Z",
-      "updatedAt": "2021-12-29T00:24:53Z",
-      "closedAt": null,
-      "comments": []
+      "updatedAt": "2022-01-05T21:12:41Z",
+      "closedAt": "2022-01-05T21:12:41Z",
+      "comments": [
+        {
+          "author": "pfeairheller",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Fixed typo.\r\n\r\nWe can't display the path in binary here because it is, well...  binary and wouldn't display.\r\n\r\nAdded a reference to T and B for text and binary and pointed to the CESR spec.\r\n\r\n(I'm going to close all the issues with my next PR, but commenting individually where appropriate.)",
+          "createdAt": "2022-01-05T20:42:51Z",
+          "updatedAt": "2022-01-05T20:42:51Z"
+        },
+        {
+          "author": "pfeairheller",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Closed with PR #19 ",
+          "createdAt": "2022-01-05T21:12:41Z",
+          "updatedAt": "2022-01-05T21:12:41Z"
+        }
+      ]
     },
     {
       "number": 18,
       "id": "I_kwDOGWk-OM5A-wzQ",
       "title": "IANA consideration, first explain briefly what it is.",
       "url": "https://github.com/WebOfTrust/ietf-cesr-proof/issues/18",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "henkvancann",
       "authorAssociation": "NONE",
       "assignees": [],
       "labels": [],
       "body": "https://github.com/WebOfTrust/ietf-cesr-proof/blob/main/draft-pfeairheller-cesr-proof.md#iana-considerations\r\n\r\n\"The Internet Assigned Numbers Authority (IANA) is a standards organization that oversees global IP address allocation, autonomous system number allocation, root zone management in the Domain Name System (DNS), media types, and other Internet Protocol-related symbols and Internet numbers.\"\r\nMore info: https://en.wikipedia.org/wiki/Internet_Assigned_Numbers_Authority",
       "createdAt": "2021-12-29T00:33:12Z",
-      "updatedAt": "2021-12-29T00:33:12Z",
-      "closedAt": null,
-      "comments": []
+      "updatedAt": "2022-01-05T21:12:52Z",
+      "closedAt": "2022-01-05T21:12:52Z",
+      "comments": [
+        {
+          "author": "pfeairheller",
+          "authorAssociation": "COLLABORATOR",
+          "body": "Closed with PR #19 ",
+          "createdAt": "2022-01-05T21:12:52Z",
+          "updatedAt": "2022-01-05T21:12:52Z"
+        }
+      ]
     }
   ],
   "pulls": [
@@ -465,6 +542,60 @@
       "mergeCommit": {
         "oid": "8e878c59394ce5e45fd20766e21c1d63771b4754"
       },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 19,
+      "id": "PR_kwDOGWk-OM4wlI5C",
+      "title": "0.1.4",
+      "url": "https://github.com/WebOfTrust/ietf-cesr-proof/pull/19",
+      "state": "MERGED",
+      "author": "pfeairheller",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "Fixing typos, adding clarity to some examples and addressing issues.\r\n\r\nCloses #10, #11, #12, #13, #15, #17, #18",
+      "createdAt": "2022-01-05T21:06:57Z",
+      "updatedAt": "2022-01-05T22:15:11Z",
+      "baseRepository": "WebOfTrust/ietf-cesr-proof",
+      "baseRefName": "main",
+      "baseRefOid": "8e878c59394ce5e45fd20766e21c1d63771b4754",
+      "headRepository": "pfeairheller/ietf-cesr-proof",
+      "headRefName": "feat-issues",
+      "headRefOid": "3ca4027eaf0bead0a31373023ac05c30ed4189c2",
+      "closedAt": "2022-01-05T21:11:10Z",
+      "mergedAt": "2022-01-05T21:11:10Z",
+      "mergedBy": "pfeairheller",
+      "mergeCommit": {
+        "oid": "138d5f7c3b1ef4db30e85c2a4b93bfe4d58a3d45"
+      },
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 20,
+      "id": "PR_kwDOGWk-OM4wlkFd",
+      "title": "various suggestions and typo corrections ",
+      "url": "https://github.com/WebOfTrust/ietf-cesr-proof/pull/20",
+      "state": "OPEN",
+      "author": "henkvancann",
+      "authorAssociation": "NONE",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2022-01-06T01:15:40Z",
+      "updatedAt": "2022-01-06T01:15:40Z",
+      "baseRepository": "WebOfTrust/ietf-cesr-proof",
+      "baseRefName": "main",
+      "baseRefOid": "138d5f7c3b1ef4db30e85c2a4b93bfe4d58a3d45",
+      "headRepository": "henkvancann/ietf-cesr-proof",
+      "headRefName": "main",
+      "headRefOid": "7ca5a0d120021fb88e59ff63ac60b7da7a55bebd",
+      "closedAt": null,
+      "mergedAt": null,
+      "mergedBy": null,
+      "mergeCommit": null,
       "comments": [],
       "reviews": []
     }
