@@ -1,7 +1,7 @@
 # License
 
 All software and documentation in this repository are *Copyright 2021 SAID Contributors* and 
-all contributions to this repository are *Licensed under the Apache License, Version 2.0 (the "License")* [here](https://github.com/WebOfTrust/ietf-said/blob/main/LICENSE);
+all contributions to this repository are *Licensed under the Apache License, Version 2.0 (the "License")* [here](https://github.com/WebOfTrust/ietf-cesr-proof/blob/main/LICENSE);
 As as defined in the the License, these contributions include but are not limited to patents, source code, specification text, 
 documentation, comments and issues. You may not use the software or documentation in this repository except in compliance with the License.
 Unless required by applicable law or agreed to in writing, software distributed
