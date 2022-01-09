@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2022-01-06T01:16:44.112226+00:00",
+  "timestamp": "2022-01-09T01:14:10.608862+00:00",
   "repo": "WebOfTrust/ietf-cesr-proof",
   "labels": [
     {
@@ -596,6 +596,34 @@
       "mergedAt": null,
       "mergedBy": null,
       "mergeCommit": null,
+      "comments": [],
+      "reviews": []
+    },
+    {
+      "number": 21,
+      "id": "PR_kwDOGWk-OM4wqCbF",
+      "title": "Create LICENSE",
+      "url": "https://github.com/WebOfTrust/ietf-cesr-proof/pull/21",
+      "state": "MERGED",
+      "author": "pfeairheller",
+      "authorAssociation": "COLLABORATOR",
+      "assignees": [],
+      "labels": [],
+      "body": "",
+      "createdAt": "2022-01-07T12:09:43Z",
+      "updatedAt": "2022-01-07T12:14:18Z",
+      "baseRepository": "WebOfTrust/ietf-cesr-proof",
+      "baseRefName": "main",
+      "baseRefOid": "138d5f7c3b1ef4db30e85c2a4b93bfe4d58a3d45",
+      "headRepository": "pfeairheller/ietf-cesr-proof",
+      "headRefName": "add-license-1",
+      "headRefOid": "d3fde4047e41fe284d30c896b7f5b069947977f1",
+      "closedAt": "2022-01-07T12:14:14Z",
+      "mergedAt": "2022-01-07T12:14:14Z",
+      "mergedBy": "pfeairheller",
+      "mergeCommit": {
+        "oid": "a1e256690cfbf2fafa0838dbda1f30c8ef8d8ee1"
+      },
       "comments": [],
       "reviews": []
     }
