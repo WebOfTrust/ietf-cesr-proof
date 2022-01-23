@@ -1,6 +1,6 @@
 {
   "magic": "E!vIA5L86J2I",
-  "timestamp": "2022-01-09T01:14:10.608862+00:00",
+  "timestamp": "2022-01-23T01:06:50.161215+00:00",
   "repo": "WebOfTrust/ietf-cesr-proof",
   "labels": [
     {
@@ -143,19 +143,19 @@
       "id": "I_kwDOGWk-OM5A-rfj",
       "title": "An infographic would help",
       "url": "https://github.com/WebOfTrust/ietf-cesr-proof/issues/14",
-      "state": "OPEN",
+      "state": "CLOSED",
       "author": "henkvancann",
       "authorAssociation": "NONE",
       "assignees": [],
       "labels": [],
       "body": "https://github.com/WebOfTrust/ietf-cesr-proof/blob/main/draft-pfeairheller-cesr-proof.md#transposable-signature-attachments\r\n\r\na drawing maybe says more than the words in this text block?",
       "createdAt": "2021-12-28T23:19:13Z",
-      "updatedAt": "2022-01-05T21:27:20Z",
-      "closedAt": null,
+      "updatedAt": "2022-01-20T11:16:08Z",
+      "closedAt": "2022-01-20T11:16:07Z",
       "comments": [
         {
           "author": "pfeairheller",
-          "authorAssociation": "COLLABORATOR",
+          "authorAssociation": "MEMBER",
           "body": "I do not believe infographics are allowed in IETF specs.  And I would know what a drawing of this would look like.",
           "createdAt": "2022-01-05T21:13:51Z",
           "updatedAt": "2022-01-05T21:13:51Z"
@@ -166,6 +166,13 @@
           "body": "I do not believe infographics are allowed in IETF specs -> Fair enough. \r\n\r\nAnd I would know what a drawing of this would look like ->\r\nAm I correct with this sketch? In this example Sig A of Payload in envelop A is transposed. Pls correct me if I am wrong.\r\n\r\n![signal-2022-01-05-222406](https://user-images.githubusercontent.com/479356/148291726-c7837b1c-04f2-4fcb-a687-bfc295d53eb5.jpeg)\r\n\r\n",
           "createdAt": "2022-01-05T21:27:20Z",
           "updatedAt": "2022-01-05T21:27:20Z"
+        },
+        {
+          "author": "henkvancann",
+          "authorAssociation": "NONE",
+          "body": "\r\n<img width=\"875\" alt=\"Transposable Signature Attachments\" src=\"https://user-images.githubusercontent.com/479356/150328656-63310bd8-6ce2-4f47-b9f9-20b0d39c05db.png\">\r\n",
+          "createdAt": "2022-01-20T11:16:07Z",
+          "updatedAt": "2022-01-20T11:16:07Z"
         }
       ]
     },
