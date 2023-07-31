@@ -1,3 +1,9 @@
+
+# This repository is superseded by the work at ToIP Technical Stack Working Group ACDC Task Force
+
+https://github.com/trustoverip/tswg-cesr-proof-specification
+
+
 # CESR Verifiable Credential Proof Format
 
 This is the working area for the individual Internet-Draft, "CESR Verifiable Credential Proof Format".
